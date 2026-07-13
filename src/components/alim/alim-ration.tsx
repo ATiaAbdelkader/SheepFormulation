@@ -19,6 +19,7 @@ import {
   Save, FolderOpen, Euro, Users, Calendar, X, FileText,
 } from "lucide-react";
 import { RationPieChart, NutrientRadarChart } from "./alim-charts";
+import { HealthRiskPanel, type RationContext } from "./alim-health-risks";
 
 const PIE_COLORS = [
   "#10b981", "#f59e0b", "#8b5cf6", "#ec4899", "#06b6d4",
@@ -1062,6 +1063,38 @@ function RationResults({ ration, animal, lotSize, feedingDays }: { ration: Ratio
           )}
         </CardContent>
       </Card>
+
+      {/* Health Risk Forecasting */}
+      {ration.totalUFL > 0 && animal && (() => {
+        const forageMS = ration.itemDetails
+          .filter((it) => it.kind === "fourrage")
+          .reduce((s, it) => s + it.msQty, 0);
+        const concentrateMS = ration.itemDetails
+          .filter((it) => it.kind === "concentre")
+          .reduce((s, it) => s + it.msQty, 0);
+        const healthCtx: RationContext = {
+          animalCategory: animal.category,
+          animalType: animal.animal_type,
+          stage: animal.stage,
+          subStage: animal.sub_stage,
+          totalUFL: ration.totalUFL,
+          totalUEM: ration.totalUEM,
+          totalPDI: ration.totalPDI,
+          totalPDIN: ration.totalPDIN,
+          totalPDIE: ration.totalPDIE,
+          totalPabs: ration.totalPabs,
+          totalCaabs: ration.totalCaabs,
+          totalMS: ration.totalMS,
+          forageMS,
+          concentrateMS,
+          needs: ration.needs,
+          coverage: ration.coverage,
+          caPRatio: ration.caPRatio,
+          rmic: ration.rmic,
+          derm: ration.derm,
+        };
+        return <HealthRiskPanel ctx={healthCtx} />;
+      })()}
 
       {/* Visualizations (pie chart + radar chart) */}
       {ration.itemDetails.length > 0 && (
