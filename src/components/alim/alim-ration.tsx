@@ -10,13 +10,21 @@ import { Button } from "@/components/ui/button";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { Calculator, Plus, Trash2, AlertTriangle, CheckCircle2, Info } from "lucide-react";
+import {
+  saveRation, loadRation, deleteRation, listRations,
+  type SavedRation,
+} from "@/lib/ration-storage";
+import {
+  Calculator, Plus, Trash2, AlertTriangle, CheckCircle2, Info,
+  Save, FolderOpen, Euro, Users, Calendar, X, FileText,
+} from "lucide-react";
 
 type FeedItem = {
   id: string;
-  kind: "fourrage" | "concentre";
+  kind: "fourrage" | "concentre" | "custom";
   record: FourrageRecord | ConcentreRecord;
   quantityKgBrut: number; // kg brut / animal / jour
+  pricePerKg: number; // € / kg brut (user editable, defaults from data)
 };
 
 // Compute the dry-matter quantity (kg MS) from kg brut and % MS
@@ -50,11 +58,26 @@ function feedMS(f: FourrageRecord | ConcentreRecord): number | null {
   return num(f.ms_pct);
 }
 
+// Default price from record (€/kg brut)
+function defaultPrice(f: FourrageRecord | ConcentreRecord): number {
+  return num(f.price) ?? 0;
+}
+
 export function AlimRation() {
   const [animalCategory, setAnimalCategory] = useState<string>("");
   const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
   const [cmvId, setCmvId] = useState<string>("");
   const [cmvQuantity, setCmvQuantity] = useState<number>(0);
+  const [cmvPricePerKg, setCmvPricePerKg] = useState<number>(0.5); // €/kg CMV
+  // Lot economics
+  const [lotSize, setLotSize] = useState<number>(50);
+  const [feedingDays, setFeedingDays] = useState<number>(30);
+
+  // Save/Load state
+  const [savedRations, setSavedRations] = useState<SavedRation[]>(() => listRations());
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [showLoadDialog, setShowLoadDialog] = useState(false);
+  const [rationName, setRationName] = useState("");
 
   // Available animals (only those with UFL values)
   const availableAnimals = useMemo(() => {
@@ -88,6 +111,7 @@ export function AlimRation() {
     let totalPDIE = 0;
     let totalPabs = 0;
     let totalCaabs = 0;
+    let totalCostPerAnimal = 0; // €/animal/day
 
     const itemDetails = feedItems.map((item) => {
       const msPct = feedMS(item.record);
@@ -104,6 +128,8 @@ export function AlimRation() {
       const pe = pdie !== null ? pdie * msQty : 0;
       const pa = pabs !== null ? pabs * msQty : 0;
       const ca = caabs !== null ? caabs * msQty : 0;
+      // Cost: kg brut × €/kg
+      const cost = item.quantityKgBrut * item.pricePerKg;
 
       totalMS += msQty;
       totalUFL += u;
@@ -111,6 +137,7 @@ export function AlimRation() {
       totalPDIE += pe;
       totalPabs += pa;
       totalCaabs += ca;
+      totalCostPerAnimal += cost;
 
       return {
         ...item,
@@ -120,16 +147,20 @@ export function AlimRation() {
         pdie: pe,
         pabs: pa,
         caabs: ca,
+        cost,
       };
     });
 
     // CMV contribution (per kg brut, values per kg)
+    let cmvCost = 0;
     if (selectedCmv && cmvQuantity > 0) {
       const cmvKg = cmvQuantity / 1000; // g to kg
       const pabsPerKg = num(selectedCmv.pabs_per_kg);
       const caabsPerKg = num(selectedCmv.caabs_per_kg);
       if (pabsPerKg !== null) totalPabs += pabsPerKg * cmvKg;
       if (caabsPerKg !== null) totalCaabs += caabsPerKg * cmvKg;
+      cmvCost = cmvKg * cmvPricePerKg;
+      totalCostPerAnimal += cmvCost;
     }
 
     // Use the minimum of PDIN/PDIE as the effective PDI (per INRA system)
@@ -155,13 +186,22 @@ export function AlimRation() {
 
     // DERm (density of energy): UFL / UEM (should be >= DERm for the ration to be feasible)
     const derm = totalUEM > 0 ? totalUFL / totalUEM : null;
-
-    // Recommended DERm (UFL / UEM)
     const recommendedDERM = needs.UEM !== null && needs.UFL !== null && needs.UEM > 0 ? needs.UFL / needs.UEM : null;
 
     // RMIC (rumen microbial nitrogen balance indicator)
-    // RMIC = (PDIN - PDIE) / UFL ; should be > -12 for single lambs, > -6 for double lambs
     const rmic = totalUFL > 0 ? (totalPDIN - totalPDIE) / totalUFL : null;
+
+    // Cost calculations
+    const costPerAnimalPerDay = totalCostPerAnimal;
+    const costPerAnimalPerMonth = totalCostPerAnimal * 30.44;
+    const costPerLotPerDay = totalCostPerAnimal * lotSize;
+    const costPerLotPerPeriod = totalCostPerAnimal * lotSize * feedingDays;
+    // Cost per UFL (energy cost)
+    const costPerUFL = totalUFL > 0 ? totalCostPerAnimal / totalUFL : null;
+    // Cost per kg MS
+    const costPerKgMS = totalMS > 0 ? totalCostPerAnimal / totalMS : null;
+    // CMV share
+    const cmvSharePct = totalCostPerAnimal > 0 ? (cmvCost / totalCostPerAnimal) * 100 : 0;
 
     return {
       needs,
@@ -179,33 +219,110 @@ export function AlimRation() {
       recommendedDERM,
       rmic,
       itemDetails,
+      costPerAnimalPerDay,
+      costPerAnimalPerMonth,
+      costPerLotPerDay,
+      costPerLotPerPeriod,
+      costPerUFL,
+      costPerKgMS,
+      cmvCost,
+      cmvSharePct,
     };
-  }, [selectedAnimal, feedItems, selectedCmv, cmvQuantity]);
+  }, [selectedAnimal, feedItems, selectedCmv, cmvQuantity, cmvPricePerKg, lotSize, feedingDays]);
 
   const addFeedItem = (kind: "fourrage" | "concentre", record: FourrageRecord | ConcentreRecord) => {
     const id = `${kind}-${record.name}-${Date.now()}`;
-    setFeedItems([...feedItems, { id, kind, record, quantityKgBrut: 0 }]);
+    const price = defaultPrice(record);
+    setFeedItems([...feedItems, { id, kind, record, quantityKgBrut: 0, pricePerKg: price }]);
   };
 
-  const updateFeedItem = (id: string, quantity: number) => {
-    setFeedItems(feedItems.map((it) => (it.id === id ? { ...it, quantityKgBrut: quantity } : it)));
+  const updateFeedItem = (id: string, field: "quantityKgBrut" | "pricePerKg", value: number) => {
+    setFeedItems(feedItems.map((it) => (it.id === id ? { ...it, [field]: value } : it)));
   };
 
   const removeFeedItem = (id: string) => {
     setFeedItems(feedItems.filter((it) => it.id !== id));
   };
 
+  // Save/load handlers
+  const handleSave = () => {
+    if (!rationName.trim() || !selectedAnimal) return;
+    const saved = saveRation({
+      name: rationName.trim(),
+      animalCategory,
+      feedItems: feedItems.map((it) => ({
+        kind: it.kind,
+        recordName: it.record.name,
+        quantityKgBrut: it.quantityKgBrut,
+        pricePerKg: it.pricePerKg,
+      })),
+      cmvId,
+      cmvQuantity,
+      cmvPricePerKg,
+      lotSize,
+      feedingDays,
+    });
+    setSavedRations(listRations());
+    setShowSaveDialog(false);
+    setRationName("");
+  };
+
+  const handleLoad = (r: SavedRation) => {
+    setAnimalCategory(r.animalCategory);
+    setCmvId(r.cmvId);
+    setCmvQuantity(r.cmvQuantity);
+    setCmvPricePerKg(r.cmvPricePerKg);
+    setLotSize(r.lotSize);
+    setFeedingDays(r.feedingDays);
+    // Reconstruct feed items from saved data
+    const items: FeedItem[] = r.feedItems.map((s, i) => {
+      const source = s.kind === "fourrage" ? alimData.fourrages : alimData.concentres;
+      const record = source.find((f) => f.name === s.recordName);
+      if (!record) return null;
+      return {
+        id: `${s.kind}-${s.recordName}-${i}`,
+        kind: s.kind,
+        record,
+        quantityKgBrut: s.quantityKgBrut,
+        pricePerKg: s.pricePerKg,
+      };
+    }).filter(Boolean) as FeedItem[];
+    setFeedItems(items);
+    setShowLoadDialog(false);
+  };
+
+  const handleDelete = (id: string) => {
+    deleteRation(id);
+    setSavedRations(listRations());
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-1">
-        <h2 className="text-xl font-bold text-stone-900 flex items-center gap-2">
-          <Calculator className="h-5 w-5 text-emerald-700" />
-          Ration — Établir une ration équilibrée
-        </h2>
-        <p className="text-sm text-stone-500">
-          Sélectionnez un animal, ajoutez des fourrages et concentrés, ajustez les quantités.
-          L&apos;outil calcule les apports (UFL, PDI, Pabs, Caabs) et les compare aux besoins.
-        </p>
+        <div className="flex items-start justify-between flex-wrap gap-2">
+          <div>
+            <h2 className="text-xl font-bold text-stone-900 flex items-center gap-2">
+              <Calculator className="h-5 w-5 text-emerald-700" />
+              Ration — Établir une ration équilibrée
+            </h2>
+            <p className="text-sm text-stone-500">
+              Sélectionnez un animal, ajoutez des fourrages et concentrés, ajustez les quantités.
+              L&apos;outil calcule les apports (UFL, PDI, Pabs, Caabs), le coût et les compare aux besoins.
+            </p>
+          </div>
+          {/* Save/Load buttons */}
+          <div className="flex items-center gap-2">
+            <Button size="sm" variant="outline" onClick={() => setShowSaveDialog(true)} disabled={!selectedAnimal}>
+              <Save className="h-4 w-4 mr-1" /> Enregistrer
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => setShowLoadDialog(true)}>
+              <FolderOpen className="h-4 w-4 mr-1" /> Charger
+              {savedRations.length > 0 && (
+                <Badge variant="secondary" className="ml-1 text-[10px]">{savedRations.length}</Badge>
+              )}
+            </Button>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -271,14 +388,28 @@ export function AlimRation() {
             </Select>
             {selectedCmv && (
               <div className="space-y-1.5">
-                <Label className="text-xs">Quantité (g/animal/jour)</Label>
-                <Input
-                  type="number"
-                  value={cmvQuantity || ""}
-                  onChange={(e) => setCmvQuantity(Number(e.target.value) || 0)}
-                  placeholder="0"
-                  className="h-9"
-                />
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <Label className="text-xs">Quantité (g/j)</Label>
+                    <Input
+                      type="number"
+                      value={cmvQuantity || ""}
+                      onChange={(e) => setCmvQuantity(Number(e.target.value) || 0)}
+                      placeholder="0"
+                      className="h-9"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Prix (€/kg)</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={cmvPricePerKg || ""}
+                      onChange={(e) => setCmvPricePerKg(Number(e.target.value) || 0)}
+                      className="h-9"
+                    />
+                  </div>
+                </div>
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div className="rounded bg-stone-50 p-1.5">
                     <div className="text-stone-500">Pabs / kg</div>
@@ -303,7 +434,7 @@ export function AlimRation() {
             Aliments de la ration
           </CardTitle>
           <CardDescription className="text-xs">
-            Ajoutez des fourrages et concentrés, puis saisissez les quantités brutes (kg/animal/jour).
+            Ajoutez des fourrages et concentrés, puis saisissez les quantités brutes (kg/animal/jour) et le prix (€/kg brut).
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -323,7 +454,7 @@ export function AlimRation() {
                 <FeedItemRow
                   key={item.id}
                   item={item}
-                  onUpdate={(q) => updateFeedItem(item.id, q)}
+                  onUpdate={(field, value) => updateFeedItem(item.id, field, value)}
                   onRemove={() => removeFeedItem(item.id)}
                 />
               ))}
@@ -332,10 +463,49 @@ export function AlimRation() {
         </CardContent>
       </Card>
 
+      {/* Lot economics */}
+      <Card className="border-stone-200 bg-amber-50/40">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+            <Users className="h-4 w-4 text-amber-700" />
+            Paramètres économiques du lot
+          </CardTitle>
+          <CardDescription className="text-xs">
+            Effectif et durée pour calculer le coût total de la ration.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs flex items-center gap-1">
+                <Users className="h-3 w-3" /> Effectif du lot (têtes)
+              </Label>
+              <Input
+                type="number"
+                min="1"
+                value={lotSize || ""}
+                onChange={(e) => setLotSize(Number(e.target.value) || 1)}
+                className="h-9"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs flex items-center gap-1">
+                <Calendar className="h-3 w-3" /> Durée d&apos;alimentation (jours)
+              </Label>
+              <Input
+                type="number"
+                min="1"
+                value={feedingDays || ""}
+                onChange={(e) => setFeedingDays(Number(e.target.value) || 1)}
+                className="h-9"
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Results */}
-      {ration && (
-        <RationResults ration={ration} animal={selectedAnimal} />
-      )}
+      {ration && <RationResults ration={ration} animal={selectedAnimal} lotSize={lotSize} feedingDays={feedingDays} />}
 
       {!selectedAnimal && (
         <Card className="border-stone-200 bg-stone-50">
@@ -344,6 +514,81 @@ export function AlimRation() {
             Sélectionnez un animal pour calculer la ration.
           </CardContent>
         </Card>
+      )}
+
+      {/* Save Dialog */}
+      {showSaveDialog && (
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4" onClick={() => setShowSaveDialog(false)}>
+          <Card className="w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-base">Enregistrer la ration</CardTitle>
+                <Button variant="ghost" size="icon" onClick={() => setShowSaveDialog(false)}><X className="h-4 w-4" /></Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs">Nom de la ration</Label>
+                <Input
+                  value={rationName}
+                  onChange={(e) => setRationName(e.target.value)}
+                  placeholder="Ex: Brebis gestantes hiver 2026"
+                  autoFocus
+                  className="h-9"
+                />
+              </div>
+              <Button className="w-full" onClick={handleSave} disabled={!rationName.trim()}>
+                <Save className="h-4 w-4 mr-2" /> Enregistrer
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Load Dialog */}
+      {showLoadDialog && (
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4" onClick={() => setShowLoadDialog(false)}>
+          <Card className="w-full max-w-lg max-h-[80vh] overflow-hidden flex flex-col" onClick={(e) => e.stopPropagation()}>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-base">Rations enregistrées</CardTitle>
+                <Button variant="ghost" size="icon" onClick={() => setShowLoadDialog(false)}><X className="h-4 w-4" /></Button>
+              </div>
+            </CardHeader>
+            <CardContent className="flex-1 overflow-y-auto">
+              {savedRations.length === 0 ? (
+                <div className="text-center text-sm text-stone-500 py-8">
+                  <FileText className="h-8 w-8 mx-auto mb-2 text-stone-300" />
+                  Aucune ration enregistrée.
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {savedRations.map((r) => (
+                    <div key={r.id} className="rounded-lg border border-stone-200 p-3 hover:bg-stone-50 transition-colors">
+                      <div className="flex items-start justify-between gap-2">
+                        <button onClick={() => handleLoad(r)} className="flex-1 text-left">
+                          <div className="text-sm font-medium text-stone-900">{r.name}</div>
+                          <div className="text-[11px] text-stone-500 mt-0.5">{r.animalCategory}</div>
+                          <div className="text-[10px] text-stone-400 mt-0.5">
+                            {r.feedItems.length} aliment(s) · {new Date(r.savedAt).toLocaleDateString("fr-FR")}
+                          </div>
+                        </button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 text-stone-400 hover:text-rose-600"
+                          onClick={() => handleDelete(r.id)}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       )}
     </div>
   );
@@ -406,6 +651,7 @@ function FeedPicker({ kind, onPick }: { kind: "fourrage" | "concentre"; onPick: 
                   {kind === "fourrage"
                     ? `MS ${fmt(num((d as FourrageRecord).ms_pct), 0)}% · UFL ${fmt(num(d.ufl))} · PDIN ${fmt(num((d as FourrageRecord).pdin), 0)}`
                     : `MS ${fmt(num((d as ConcentreRecord).ms_pct), 0)}% · UFL ${fmt(num(d.ufl))} · PDIN ${fmt(num((d as ConcentreRecord).pdin), 0)}`}
+                  {num(d.price) !== null && <span className="ml-1 text-emerald-700">· {fmt(num(d.price), 2)} €/kg</span>}
                 </div>
               </button>
             ))}
@@ -419,10 +665,19 @@ function FeedPicker({ kind, onPick }: { kind: "fourrage" | "concentre"; onPick: 
   );
 }
 
-function FeedItemRow({ item, onUpdate, onRemove }: { item: FeedItem; onUpdate: (q: number) => void; onRemove: () => void }) {
+function FeedItemRow({
+  item,
+  onUpdate,
+  onRemove,
+}: {
+  item: FeedItem;
+  onUpdate: (field: "quantityKgBrut" | "pricePerKg", value: number) => void;
+  onRemove: () => void;
+}) {
   const msPct = feedMS(item.record);
   const msQty = msFromBrut(item.quantityKgBrut, msPct);
   const isFourrage = item.kind === "fourrage";
+  const cost = item.quantityKgBrut * item.pricePerKg;
 
   return (
     <div className={`rounded-lg border p-3 ${isFourrage ? "border-lime-200 bg-lime-50/30" : "border-orange-200 bg-orange-50/30"}`}>
@@ -438,7 +693,7 @@ function FeedItemRow({ item, onUpdate, onRemove }: { item: FeedItem; onUpdate: (
             MS {fmt(msPct, 0)}% · UFL {fmt(feedUFL(item.record))} · PDIN {fmt(feedPDIN(item.record), 0)} · Pabs {fmt(feedPabs(item.record), 2)} · Caabs {fmt(feedCaabs(item.record), 2)}
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-end gap-2">
           <div className="flex flex-col">
             <Label className="text-[10px] text-stone-500">kg brut / j</Label>
             <Input
@@ -446,13 +701,24 @@ function FeedItemRow({ item, onUpdate, onRemove }: { item: FeedItem; onUpdate: (
               step="0.1"
               min="0"
               value={item.quantityKgBrut || ""}
-              onChange={(e) => onUpdate(Number(e.target.value) || 0)}
+              onChange={(e) => onUpdate("quantityKgBrut", Number(e.target.value) || 0)}
               className="h-9 w-24"
             />
           </div>
-          <div className="flex flex-col text-[10px] text-stone-500">
+          <div className="flex flex-col">
+            <Label className="text-[10px] text-stone-500">€ / kg</Label>
+            <Input
+              type="number"
+              step="0.01"
+              min="0"
+              value={item.pricePerKg || ""}
+              onChange={(e) => onUpdate("pricePerKg", Number(e.target.value) || 0)}
+              className="h-9 w-20"
+            />
+          </div>
+          <div className="flex flex-col text-[10px] text-stone-500 min-w-[60px]">
             <span>= {fmt(msQty, 2)} kg MS</span>
-            <span>UFL: {fmt(feedUFL(item.record) !== null ? feedUFL(item.record)! * msQty : null, 2)}</span>
+            <span className="text-amber-700 font-medium">{fmt(cost, 2)} €/j</span>
           </div>
           <Button variant="ghost" size="icon" onClick={onRemove} className="text-stone-400 hover:text-rose-600 h-9 w-9">
             <Trash2 className="h-4 w-4" />
@@ -478,10 +744,18 @@ type RationData = {
   derm: number | null;
   recommendedDERM: number | null;
   rmic: number | null;
-  itemDetails: Array<FeedItem & { msQty: number; ufl: number; pdin: number; pdie: number; pabs: number; caabs: number }>;
+  itemDetails: Array<FeedItem & { msQty: number; ufl: number; pdin: number; pdie: number; pabs: number; caabs: number; cost: number }>;
+  costPerAnimalPerDay: number;
+  costPerAnimalPerMonth: number;
+  costPerLotPerDay: number;
+  costPerLotPerPeriod: number;
+  costPerUFL: number | null;
+  costPerKgMS: number | null;
+  cmvCost: number;
+  cmvSharePct: number;
 };
 
-function RationResults({ ration, animal }: { ration: RationData; animal: AnimalRecord | null }) {
+function RationResults({ ration, animal, lotSize, feedingDays }: { ration: RationData; animal: AnimalRecord | null; lotSize: number; feedingDays: number }) {
   const getStatus = (coverage: number | null): { label: string; color: string; icon: React.ReactNode } => {
     if (coverage === null) return { label: "N/A", color: "text-stone-400", icon: <Info className="h-3 w-3" /> };
     if (coverage >= 95 && coverage <= 105) return { label: "Équilibré", color: "text-emerald-700", icon: <CheckCircle2 className="h-3 w-3" /> };
@@ -491,6 +765,38 @@ function RationResults({ ration, animal }: { ration: RationData; animal: AnimalR
 
   return (
     <div className="space-y-4">
+      {/* COST SUMMARY — Featured card */}
+      <Card className="border-amber-300 bg-gradient-to-br from-amber-50 to-yellow-50">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+            <Euro className="h-4 w-4 text-amber-700" />
+            Coût de la ration
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <CostBox label="Coût / animal / jour" value={ration.costPerAnimalPerDay} unit="€" highlight />
+            <CostBox label="Coût / animal / mois" value={ration.costPerAnimalPerMonth} unit="€" />
+            <CostBox label={`Coût / lot (${lotSize}) / jour`} value={ration.costPerLotPerDay} unit="€" />
+            <CostBox label={`Coût / lot / ${feedingDays}j`} value={ration.costPerLotPerPeriod} unit="€" highlight />
+          </div>
+          <div className="mt-3 pt-3 border-t border-amber-200 grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+            <div className="flex justify-between">
+              <span className="text-stone-600">Coût par UFL</span>
+              <span className="font-medium text-stone-900">{ration.costPerUFL !== null ? `${fmt(ration.costPerUFL, 3)} €` : "—"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-stone-600">Coût par kg MS</span>
+              <span className="font-medium text-stone-900">{ration.costPerKgMS !== null ? `${fmt(ration.costPerKgMS, 3)} €` : "—"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-stone-600">Part CMV</span>
+              <span className="font-medium text-stone-900">{fmt(ration.cmvSharePct, 1)}% ({fmt(ration.cmvCost, 3)} €/j)</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Headline metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
         <MetricCard label="MS distribuée" value={fmt(ration.totalMS, 2)} unit="kg/j" status={getStatus(ration.coverage.UEM)} />
@@ -566,7 +872,7 @@ function RationResults({ ration, animal }: { ration: RationData; animal: AnimalR
         </Card>
       </div>
 
-      {/* Feed contributions */}
+      {/* Feed contributions with cost */}
       {ration.itemDetails.length > 0 && (
         <Card className="border-stone-200">
           <CardHeader className="pb-3">
@@ -580,11 +886,13 @@ function RationResults({ ration, animal }: { ration: RationData; animal: AnimalR
                     <th className="text-left px-3 py-2 font-medium">Aliment</th>
                     <th className="text-right px-3 py-2 font-medium">kg brut</th>
                     <th className="text-right px-3 py-2 font-medium">kg MS</th>
+                    <th className="text-right px-3 py-2 font-medium">€/kg</th>
                     <th className="text-right px-3 py-2 font-medium">UFL</th>
                     <th className="text-right px-3 py-2 font-medium">PDIN (g)</th>
                     <th className="text-right px-3 py-2 font-medium">PDIE (g)</th>
                     <th className="text-right px-3 py-2 font-medium">Pabs (g)</th>
                     <th className="text-right px-3 py-2 font-medium">Caabs (g)</th>
+                    <th className="text-right px-3 py-2 font-medium">Coût (€/j)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -598,22 +906,26 @@ function RationResults({ ration, animal }: { ration: RationData; animal: AnimalR
                       </td>
                       <td className="px-3 py-1.5 text-right tabular-nums">{fmt(it.quantityKgBrut, 2)}</td>
                       <td className="px-3 py-1.5 text-right tabular-nums">{fmt(it.msQty, 2)}</td>
+                      <td className="px-3 py-1.5 text-right tabular-nums text-amber-700">{fmt(it.pricePerKg, 2)}</td>
                       <td className="px-3 py-1.5 text-right tabular-nums">{fmt(it.ufl, 3)}</td>
                       <td className="px-3 py-1.5 text-right tabular-nums">{fmt(it.pdin, 0)}</td>
                       <td className="px-3 py-1.5 text-right tabular-nums">{fmt(it.pdie, 0)}</td>
                       <td className="px-3 py-1.5 text-right tabular-nums">{fmt(it.pabs, 2)}</td>
                       <td className="px-3 py-1.5 text-right tabular-nums">{fmt(it.caabs, 2)}</td>
+                      <td className="px-3 py-1.5 text-right tabular-nums font-medium text-amber-800">{fmt(it.cost, 3)}</td>
                     </tr>
                   ))}
                   <tr className="bg-stone-50 font-semibold">
                     <td className="px-3 py-2">TOTAL</td>
                     <td className="px-3 py-2 text-right tabular-nums">{fmt(ration.itemDetails.reduce((s, it) => s + it.quantityKgBrut, 0), 2)}</td>
                     <td className="px-3 py-2 text-right tabular-nums">{fmt(ration.totalMS, 2)}</td>
+                    <td className="px-3 py-2 text-right tabular-nums">—</td>
                     <td className="px-3 py-2 text-right tabular-nums">{fmt(ration.totalUFL, 3)}</td>
                     <td className="px-3 py-2 text-right tabular-nums">{fmt(ration.totalPDIN, 0)}</td>
                     <td className="px-3 py-2 text-right tabular-nums">{fmt(ration.totalPDIE, 0)}</td>
                     <td className="px-3 py-2 text-right tabular-nums">{fmt(ration.totalPabs, 2)}</td>
                     <td className="px-3 py-2 text-right tabular-nums">{fmt(ration.totalCaabs, 2)}</td>
+                    <td className="px-3 py-2 text-right tabular-nums text-amber-800">{fmt(ration.costPerAnimalPerDay, 3)}</td>
                   </tr>
                 </tbody>
               </table>
@@ -636,6 +948,18 @@ function RationResults({ ration, animal }: { ration: RationData; animal: AnimalR
           </CardContent>
         </Card>
       )}
+    </div>
+  );
+}
+
+function CostBox({ label, value, unit, highlight }: { label: string; value: number; unit: string; highlight?: boolean }) {
+  return (
+    <div className={`rounded-lg p-3 ${highlight ? "bg-amber-100 ring-1 ring-amber-300" : "bg-white border border-amber-200"}`}>
+      <div className="text-[10px] text-stone-600 uppercase tracking-wide">{label}</div>
+      <div className="flex items-baseline gap-1 mt-0.5">
+        <span className={`text-lg font-bold ${highlight ? "text-amber-900" : "text-stone-900"}`}>{fmt(value, 2)}</span>
+        <span className="text-[10px] text-stone-500">{unit}</span>
+      </div>
     </div>
   );
 }
