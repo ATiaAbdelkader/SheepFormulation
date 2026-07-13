@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { LayoutDashboard, Users, Wheat, Sprout, Pill, Calculator, Baby, Scale, Blend, Trees, Zap, GitCompare, FlaskConical, BookOpen, CalendarDays, Telescope, ShieldCheck, Sparkles, Atom, Menu, X } from "lucide-react";
+import { LayoutDashboard, Users, Wheat, Sprout, Pill, Calculator, Baby, Scale, Blend, Trees, Zap, GitCompare, FlaskConical, BookOpen, CalendarDays, Telescope, ShieldCheck, Sparkles, Atom, GraduationCap, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AlimDashboard } from "@/components/alim/alim-dashboard";
@@ -23,6 +23,7 @@ import { AlimGlossaire } from "@/components/alim/alim-glossaire";
 import { AlimCalendrier } from "@/components/alim/alim-calendrier";
 import { AlimPrevision } from "@/components/alim/alim-prevision";
 import { AlimRumenSim } from "@/components/alim/alim-rumen-sim";
+import { AlimClassroom } from "@/components/alim/alim-classroom";
 
 type AlimView =
   | "dashboard"
@@ -43,7 +44,8 @@ type AlimView =
   | "glossaire"
   | "calendrier"
   | "prevision"
-  | "rumen-sim";
+  | "rumen-sim"
+  | "classroom";
 
 const NAV_ITEMS: { id: AlimView; label: string; description: string; icon: ReactNode }[] = [
   { id: "dashboard", label: "Tableau de bord", description: "Vue d'ensemble", icon: <LayoutDashboard className="h-5 w-5" /> },
@@ -65,6 +67,7 @@ const NAV_ITEMS: { id: AlimView; label: string; description: string; icon: React
   { id: "calendrier", label: "Calendrier", description: "Planning du troupeau", icon: <CalendarDays className="h-5 w-5" /> },
   { id: "prevision", label: "Prévision", description: "Valeur des aliments du commerce", icon: <Telescope className="h-5 w-5" /> },
   { id: "rumen-sim", label: "Simulateur rumen", description: "Visualisation interactive", icon: <Atom className="h-5 w-5" /> },
+  { id: "classroom", label: "Classe", description: "Mode pédagogique", icon: <GraduationCap className="h-5 w-5" /> },
 ];
 
 export default function Home() {
@@ -203,6 +206,7 @@ export default function Home() {
             {view === "calendrier" && <AlimCalendrier />}
             {view === "prevision" && <AlimPrevision />}
             {view === "rumen-sim" && <AlimRumenSim />}
+            {view === "classroom" && <AlimClassroom />}
           </div>
         </main>
       </div>

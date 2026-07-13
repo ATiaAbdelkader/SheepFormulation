@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -29,4 +26,63 @@ model Post {
   authorId  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// ---------- Classroom Mode ----------
+
+model Assignment {
+  id          String   @id @default(cuid())
+  code        String   @unique // 6-char code for students to join
+  title       String
+  description String
+  animalCategory String // target animal
+  // Constraints
+  maxCostPerDay    Float?  // €/animal/day max
+  minPDICoverage   Float   // % PDI coverage minimum (e.g. 95)
+  minUFLCoverage   Float   // % UFL coverage minimum
+  minPabsCoverage  Float?  // % Pabs coverage minimum
+  minCaabsCoverage Float?  // % Caabs coverage minimum
+  maxConcentratePct Float? // max % of concentrate in MS
+  // Grading weights (must sum to 100)
+  weightCost       Float   // weight of cost in grade
+  weightCoverage   Float   // weight of nutritional coverage
+  weightFeasibility Float  // weight of UEM feasibility
+  // Metadata
+  createdBy        String  // teacher name
+  createdAt        DateTime @default(now())
+  dueDate          DateTime?
+  isActive         Boolean  @default(true)
+
+  submissions Submission[]
+}
+
+model Submission {
+  id          String   @id @default(cuid())
+  assignmentId String
+  studentName String
+  studentEmail String?
+  // Ration data (JSON)
+  rationData  String   // JSON string of the ration (feeds, quantities, etc.)
+  // Computed metrics
+  totalUFL    Float
+  totalPDI    Float
+  totalPabs   Float
+  totalCaabs  Float
+  totalMS     Float
+  totalCost   Float
+  coverageUFL Float  // %
+  coveragePDI Float  // %
+  coveragePabs Float // %
+  coverageCaabs Float // %
+  concentratePct Float // %
+  feasibleUM  Boolean
+  // Grading
+  score       Float?  // 0-100
+  grade       String? // A, B, C, D, F
+  feedback    String? // auto-generated feedback
+  submittedAt DateTime @default(now())
+
+  assignment  Assignment @relation(fields: [assignmentId], references: [id])
+
+  @@index([assignmentId])
 }
