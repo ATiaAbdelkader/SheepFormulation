@@ -203,6 +203,44 @@ export function AlimRation() {
     // CMV share
     const cmvSharePct = totalCostPerAnimal > 0 ? (cmvCost / totalCostPerAnimal) * 100 : 0;
 
+    // Ca/P ratio (absorbable, final)
+    const caPRatio = totalPabs > 0 ? totalCaabs / totalPabs : null;
+    // Reference: INRA 2018 — Ca/P ratio of 1.0-1.5 is optimal for sheep
+    // Below 1.0 → too much P relative to Ca → risk of urinary calculi
+    // Above 2.0 → too much Ca relative to P → can interfere with P absorption
+
+    // Mineral breakdown: pre-CMV (feeds only) → after CMV correction
+    let preCmvPabs = 0;
+    let preCmvCaabs = 0;
+    feedItems.forEach((item) => {
+      const msPct = feedMS(item.record);
+      const msQty = msFromBrut(item.quantityKgBrut, msPct);
+      const pabs = feedPabs(item.record);
+      const caabs = feedCaabs(item.record);
+      if (pabs !== null) preCmvPabs += pabs * msQty;
+      if (caabs !== null) preCmvCaabs += caabs * msQty;
+    });
+    const preCmvCaPRatio = preCmvPabs > 0 ? preCmvCaabs / preCmvPabs : null;
+    const pabsDeficitPreCmv = needs.Pabs !== null ? needs.Pabs - preCmvPabs : null;
+    const caabsDeficitPreCmv = needs.Caabs !== null ? needs.Caabs - preCmvCaabs : null;
+
+    // CMV contribution to minerals
+    let cmvPabsContrib = 0;
+    let cmvCaabsContrib = 0;
+    if (selectedCmv && cmvQuantity > 0) {
+      const cmvKg = cmvQuantity / 1000;
+      const pabsPerKg = num(selectedCmv.pabs_per_kg);
+      const caabsPerKg = num(selectedCmv.caabs_per_kg);
+      if (pabsPerKg !== null) cmvPabsContrib = pabsPerKg * cmvKg;
+      if (caabsPerKg !== null) cmvCaabsContrib = caabsPerKg * cmvKg;
+    }
+
+    // After correction (final, with CMV)
+    const pabsAfterCorrection = preCmvPabs + cmvPabsContrib;
+    const caabsAfterCorrection = preCmvCaabs + cmvCaabsContrib;
+    const finalPabsDeficit = needs.Pabs !== null ? needs.Pabs - pabsAfterCorrection : null;
+    const finalCaabsDeficit = needs.Caabs !== null ? needs.Caabs - caabsAfterCorrection : null;
+
     return {
       needs,
       totalMS,
@@ -227,6 +265,19 @@ export function AlimRation() {
       costPerKgMS,
       cmvCost,
       cmvSharePct,
+      // Minerals
+      caPRatio,
+      preCmvPabs,
+      preCmvCaabs,
+      preCmvCaPRatio,
+      pabsDeficitPreCmv,
+      caabsDeficitPreCmv,
+      cmvPabsContrib,
+      cmvCaabsContrib,
+      pabsAfterCorrection,
+      caabsAfterCorrection,
+      finalPabsDeficit,
+      finalCaabsDeficit,
     };
   }, [selectedAnimal, feedItems, selectedCmv, cmvQuantity, cmvPricePerKg, lotSize, feedingDays]);
 
@@ -753,6 +804,19 @@ type RationData = {
   costPerKgMS: number | null;
   cmvCost: number;
   cmvSharePct: number;
+  // Minerals
+  caPRatio: number | null;
+  preCmvPabs: number;
+  preCmvCaabs: number;
+  preCmvCaPRatio: number | null;
+  pabsDeficitPreCmv: number | null;
+  caabsDeficitPreCmv: number | null;
+  cmvPabsContrib: number;
+  cmvCaabsContrib: number;
+  pabsAfterCorrection: number;
+  caabsAfterCorrection: number;
+  finalPabsDeficit: number | null;
+  finalCaabsDeficit: number | null;
 };
 
 function RationResults({ ration, animal, lotSize, feedingDays }: { ration: RationData; animal: AnimalRecord | null; lotSize: number; feedingDays: number }) {
@@ -871,6 +935,126 @@ function RationResults({ ration, animal, lotSize, feedingDays }: { ration: Ratio
           </CardContent>
         </Card>
       </div>
+
+      {/* Mineral detail panel */}
+      <Card className="border-rose-200 bg-gradient-to-br from-rose-50/60 to-amber-50/40">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+            <span className="inline-flex items-center justify-center rounded bg-rose-100 text-rose-700 px-2 py-0.5 text-[10px] font-bold">Ca/P</span>
+            Bilan minéral & choix du CMV
+          </CardTitle>
+          <CardDescription className="text-xs">
+            Le rapport Ca/P doit être entre 1.0 et 1.5 pour les ovins (INRA 2018). Le CMV corrige les déficits en Pabs et Caabs.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Ca/P ratio big display */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="rounded-lg bg-white p-3 border border-rose-200">
+              <div className="text-[10px] text-stone-500 uppercase tracking-wide">Rapport Ca/P (final)</div>
+              <div className="flex items-baseline gap-1">
+                <span className={`text-2xl font-bold ${ration.caPRatio === null ? "text-stone-400" : ration.caPRatio >= 1.0 && ration.caPRatio <= 1.5 ? "text-emerald-700" : "text-amber-700"}`}>
+                  {ration.caPRatio !== null ? fmt(ration.caPRatio, 2) : "—"}
+                </span>
+                <span className="text-[10px] text-stone-500">optimal: 1.0–1.5</span>
+              </div>
+            </div>
+            <div className="rounded-lg bg-white p-3 border border-rose-200">
+              <div className="text-[10px] text-stone-500 uppercase tracking-wide">Ca/P avant CMV</div>
+              <div className="flex items-baseline gap-1">
+                <span className={`text-2xl font-bold ${ration.preCmvCaPRatio === null ? "text-stone-400" : ration.preCmvCaPRatio >= 1.0 && ration.preCmvCaPRatio <= 1.5 ? "text-emerald-700" : "text-amber-700"}`}>
+                  {ration.preCmvCaPRatio !== null ? fmt(ration.preCmvCaPRatio, 2) : "—"}
+                </span>
+              </div>
+            </div>
+            <div className="rounded-lg bg-white p-3 border border-rose-200">
+              <div className="text-[10px] text-stone-500 uppercase tracking-wide">Statut minéral</div>
+              <div className="text-sm font-medium">
+                {ration.finalPabsDeficit !== null && ration.finalCaabsDeficit !== null ? (
+                  Math.abs(ration.finalPabsDeficit) < 0.1 && Math.abs(ration.finalCaabsDeficit) < 0.1 ? (
+                    <span className="text-emerald-700 flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> Équilibré</span>
+                  ) : ration.finalPabsDeficit > 0.2 || ration.finalCaabsDeficit > 0.2 ? (
+                    <span className="text-amber-700 flex items-center gap-1"><AlertTriangle className="h-3 w-3" /> Excès résiduel</span>
+                  ) : (
+                    <span className="text-rose-700 flex items-center gap-1"><AlertTriangle className="h-3 w-3" /> Déficit résiduel</span>
+                  )
+                ) : (
+                  <span className="text-stone-400">—</span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Detailed mineral table */}
+          <div className="overflow-x-auto rounded-lg border border-rose-200 bg-white">
+            <table className="w-full text-xs">
+              <thead className="bg-rose-50 text-stone-700 border-b border-rose-200">
+                <tr>
+                  <th className="text-left px-3 py-2 font-medium">Minéral</th>
+                  <th className="text-right px-3 py-2 font-medium">Besoins</th>
+                  <th className="text-right px-3 py-2 font-medium">Apports aliments</th>
+                  <th className="text-right px-3 py-2 font-medium">Déficit (avant CMV)</th>
+                  <th className="text-right px-3 py-2 font-medium">Apport CMV</th>
+                  <th className="text-right px-3 py-2 font-medium">Total corrigé</th>
+                  <th className="text-right px-3 py-2 font-medium">Déficit final</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-stone-100">
+                  <td className="px-3 py-2 text-stone-900 font-medium">Pabs (Phosphore absorbable, g)</td>
+                  <td className="px-3 py-2 text-right tabular-nums">{fmt(ration.needs.Pabs, 2)}</td>
+                  <td className="px-3 py-2 text-right tabular-nums">{fmt(ration.preCmvPabs, 2)}</td>
+                  <td className={`px-3 py-2 text-right tabular-nums ${ration.pabsDeficitPreCmv !== null && ration.pabsDeficitPreCmv > 0 ? "text-rose-700 font-medium" : "text-emerald-700"}`}>
+                    {ration.pabsDeficitPreCmv !== null ? (ration.pabsDeficitPreCmv > 0 ? `-${fmt(ration.pabsDeficitPreCmv, 2)}` : `+${fmt(Math.abs(ration.pabsDeficitPreCmv), 2)}`) : "—"}
+                  </td>
+                  <td className="px-3 py-2 text-right tabular-nums text-emerald-700">+{fmt(ration.cmvPabsContrib, 2)}</td>
+                  <td className="px-3 py-2 text-right tabular-nums font-medium">{fmt(ration.pabsAfterCorrection, 2)}</td>
+                  <td className={`px-3 py-2 text-right tabular-nums font-medium ${ration.finalPabsDeficit !== null ? (Math.abs(ration.finalPabsDeficit) < 0.1 ? "text-emerald-700" : ration.finalPabsDeficit > 0 ? "text-rose-700" : "text-amber-700") : "text-stone-400"}`}>
+                    {ration.finalPabsDeficit !== null ? (Math.abs(ration.finalPabsDeficit) < 0.1 ? "0.00" : ration.finalPabsDeficit > 0 ? `-${fmt(ration.finalPabsDeficit, 2)}` : `+${fmt(Math.abs(ration.finalPabsDeficit), 2)}`) : "—"}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-3 py-2 text-stone-900 font-medium">Caabs (Calcium absorbable, g)</td>
+                  <td className="px-3 py-2 text-right tabular-nums">{fmt(ration.needs.Caabs, 2)}</td>
+                  <td className="px-3 py-2 text-right tabular-nums">{fmt(ration.preCmvCaabs, 2)}</td>
+                  <td className={`px-3 py-2 text-right tabular-nums ${ration.caabsDeficitPreCmv !== null && ration.caabsDeficitPreCmv > 0 ? "text-rose-700 font-medium" : "text-emerald-700"}`}>
+                    {ration.caabsDeficitPreCmv !== null ? (ration.caabsDeficitPreCmv > 0 ? `-${fmt(ration.caabsDeficitPreCmv, 2)}` : `+${fmt(Math.abs(ration.caabsDeficitPreCmv), 2)}`) : "—"}
+                  </td>
+                  <td className="px-3 py-2 text-right tabular-nums text-emerald-700">+{fmt(ration.cmvCaabsContrib, 2)}</td>
+                  <td className="px-3 py-2 text-right tabular-nums font-medium">{fmt(ration.caabsAfterCorrection, 2)}</td>
+                  <td className={`px-3 py-2 text-right tabular-nums font-medium ${ration.finalCaabsDeficit !== null ? (Math.abs(ration.finalCaabsDeficit) < 0.1 ? "text-emerald-700" : ration.finalCaabsDeficit > 0 ? "text-rose-700" : "text-amber-700") : "text-stone-400"}`}>
+                    {ration.finalCaabsDeficit !== null ? (Math.abs(ration.finalCaabsDeficit) < 0.1 ? "0.00" : ration.finalCaabsDeficit > 0 ? `-${fmt(ration.finalCaabsDeficit, 2)}` : `+${fmt(Math.abs(ration.finalCaabsDeficit), 2)}`) : "—"}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* CMV recommendation */}
+          {ration.pabsDeficitPreCmv !== null && ration.caabsDeficitPreCmv !== null && (ration.pabsDeficitPreCmv > 0.1 || ration.caabsDeficitPreCmv > 0.1) && (
+            <div className="rounded-lg bg-amber-100 border border-amber-300 p-3 text-xs">
+              <div className="flex items-start gap-2">
+                <Info className="h-4 w-4 text-amber-700 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="font-medium text-amber-900">Recommandation CMV</p>
+                  <p className="text-amber-800 mt-1">
+                    {ration.caabsDeficitPreCmv > ration.pabsDeficitPreCmv ? (
+                      <>Déficit principalement en <strong>calcium</strong>. Choisissez un CMV riche en Ca (ex: &quot;12 - 12&quot; ou &quot;8 - 18&quot;).</>
+                    ) : ration.pabsDeficitPreCmv > ration.caabsDeficitPreCmv ? (
+                      <>Déficit principalement en <strong>phosphore</strong>. Choisissez un CMV riche en P (ex: &quot;0 - 27&quot; ou &quot;2 - 28&quot;).</>
+                    ) : (
+                      <>Déficit équilibré Ca/P. Choisissez un CMV équilibré (ex: &quot;5 - 20&quot; ou &quot;6 - 18&quot;).</>
+                    )}
+                    {ration.preCmvCaPRatio !== null && (
+                      <> Rapport Ca/P actuel: <strong>{fmt(ration.preCmvCaPRatio, 2)}</strong>.</>
+                    )}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Feed contributions with cost */}
       {ration.itemDetails.length > 0 && (
