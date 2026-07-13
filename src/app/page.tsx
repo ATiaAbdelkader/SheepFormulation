@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { LayoutDashboard, Users, Wheat, Sprout, Pill, Calculator, Baby, Scale, Blend, Trees, Zap, GitCompare, FlaskConical, BookOpen, CalendarDays, CrystalBall, Menu, X } from "lucide-react";
+import { LayoutDashboard, Users, Wheat, Sprout, Pill, Calculator, Baby, Scale, Blend, Trees, Zap, GitCompare, FlaskConical, BookOpen, CalendarDays, Telescope, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AlimDashboard } from "@/components/alim/alim-dashboard";
@@ -55,7 +55,7 @@ const NAV_ITEMS: { id: AlimView; label: string; description: string; icon: React
   { id: "paturage", label: "Pâturage", description: "Jours d'avance", icon: <Trees className="h-5 w-5" /> },
   { id: "glossaire", label: "Glossaire", description: "Définitions & références", icon: <BookOpen className="h-5 w-5" /> },
   { id: "calendrier", label: "Calendrier", description: "Planning du troupeau", icon: <CalendarDays className="h-5 w-5" /> },
-  { id: "prevision", label: "Prévision", description: "Valeur des aliments du commerce", icon: <CrystalBall className="h-5 w-5" /> },
+  { id: "prevision", label: "Prévision", description: "Valeur des aliments du commerce", icon: <Telescope className="h-5 w-5" /> },
 ];
 
 export default function Home() {

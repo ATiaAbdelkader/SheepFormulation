@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CrystalBall, Info, Sparkles, Calculator } from "lucide-react";
+import { Telescope, Info, Sparkles, Calculator } from "lucide-react";
 
 // INRA 2018 regression equations for predicting feed values from analytical composition
 // These are simplified INRA equations used to estimate UFL, PDIN, PDIE, etc. from MAT and CB
@@ -118,7 +118,7 @@ export function AlimPrevision() {
     <div className="space-y-4">
       <div className="flex flex-col gap-1">
         <h2 className="text-xl font-bold text-stone-900 flex items-center gap-2">
-          <CrystalBall className="h-5 w-5 text-purple-700" />
+          <Telescope className="h-5 w-5 text-purple-700" />
           Prévision — Valeur alimentaire des aliments du commerce
         </h2>
         <p className="text-sm text-stone-500">
