@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { LayoutDashboard, Users, Wheat, Sprout, Pill, Calculator, Baby, Scale, Blend, Trees, Menu, X } from "lucide-react";
+import { LayoutDashboard, Users, Wheat, Sprout, Pill, Calculator, Baby, Scale, Blend, Trees, Zap, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AlimDashboard } from "@/components/alim/alim-dashboard";
@@ -10,6 +10,7 @@ import { AlimFourrages } from "@/components/alim/alim-fourrages";
 import { AlimConcentres } from "@/components/alim/alim-concentres";
 import { AlimCMV } from "@/components/alim/alim-cmv";
 import { AlimRation } from "@/components/alim/alim-ration";
+import { AlimOptimisation } from "@/components/alim/alim-optimisation";
 import { AlimAgneaux } from "@/components/alim/alim-agneaux";
 import { AlimBilan } from "@/components/alim/alim-bilan";
 import { AlimMelange } from "@/components/alim/alim-melange";
@@ -22,6 +23,7 @@ type AlimView =
   | "concentres"
   | "cmv"
   | "ration"
+  | "optimisation"
   | "agneaux"
   | "bilan"
   | "melange"
@@ -30,6 +32,7 @@ type AlimView =
 const NAV_ITEMS: { id: AlimView; label: string; description: string; icon: ReactNode }[] = [
   { id: "dashboard", label: "Tableau de bord", description: "Vue d'ensemble", icon: <LayoutDashboard className="h-5 w-5" /> },
   { id: "ration", label: "Ration", description: "Établir une ration", icon: <Calculator className="h-5 w-5" /> },
+  { id: "optimisation", label: "Optimisation", description: "Moindre coût (LP)", icon: <Zap className="h-5 w-5" /> },
   { id: "animals", label: "Animaux", description: "Besoins alimentaires", icon: <Users className="h-5 w-5" /> },
   { id: "fourrages", label: "Fourrages", description: "Base fourrages", icon: <Wheat className="h-5 w-5" /> },
   { id: "concentres", label: "Concentrés", description: "Base concentrés", icon: <Sprout className="h-5 w-5" /> },
@@ -159,6 +162,7 @@ export default function Home() {
           <div className="container mx-auto px-4 sm:px-6 py-6 max-w-7xl">
             {view === "dashboard" && <AlimDashboard onNavigate={handleNav} />}
             {view === "ration" && <AlimRation />}
+            {view === "optimisation" && <AlimOptimisation />}
             {view === "animals" && <AlimAnimals />}
             {view === "fourrages" && <AlimFourrages />}
             {view === "concentres" && <AlimConcentres />}
