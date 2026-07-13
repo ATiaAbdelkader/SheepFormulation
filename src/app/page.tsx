@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { LayoutDashboard, Users, Wheat, Sprout, Pill, Calculator, Baby, Scale, Blend, Trees, Zap, GitCompare, FlaskConical, BookOpen, CalendarDays, Menu, X } from "lucide-react";
+import { LayoutDashboard, Users, Wheat, Sprout, Pill, Calculator, Baby, Scale, Blend, Trees, Zap, GitCompare, FlaskConical, BookOpen, CalendarDays, CrystalBall, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AlimDashboard } from "@/components/alim/alim-dashboard";
@@ -19,6 +19,7 @@ import { AlimMelange } from "@/components/alim/alim-melange";
 import { AlimPaturage } from "@/components/alim/alim-paturage";
 import { AlimGlossaire } from "@/components/alim/alim-glossaire";
 import { AlimCalendrier } from "@/components/alim/alim-calendrier";
+import { AlimPrevision } from "@/components/alim/alim-prevision";
 
 type AlimView =
   | "dashboard"
@@ -35,7 +36,8 @@ type AlimView =
   | "melange"
   | "paturage"
   | "glossaire"
-  | "calendrier";
+  | "calendrier"
+  | "prevision";
 
 const NAV_ITEMS: { id: AlimView; label: string; description: string; icon: ReactNode }[] = [
   { id: "dashboard", label: "Tableau de bord", description: "Vue d'ensemble", icon: <LayoutDashboard className="h-5 w-5" /> },
@@ -53,6 +55,7 @@ const NAV_ITEMS: { id: AlimView; label: string; description: string; icon: React
   { id: "paturage", label: "Pâturage", description: "Jours d'avance", icon: <Trees className="h-5 w-5" /> },
   { id: "glossaire", label: "Glossaire", description: "Définitions & références", icon: <BookOpen className="h-5 w-5" /> },
   { id: "calendrier", label: "Calendrier", description: "Planning du troupeau", icon: <CalendarDays className="h-5 w-5" /> },
+  { id: "prevision", label: "Prévision", description: "Valeur des aliments du commerce", icon: <CrystalBall className="h-5 w-5" /> },
 ];
 
 export default function Home() {
@@ -187,6 +190,7 @@ export default function Home() {
             {view === "paturage" && <AlimPaturage />}
             {view === "glossaire" && <AlimGlossaire />}
             {view === "calendrier" && <AlimCalendrier />}
+            {view === "prevision" && <AlimPrevision />}
           </div>
         </main>
       </div>
