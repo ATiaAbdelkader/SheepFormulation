@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { LayoutDashboard, Users, Wheat, Sprout, Pill, Calculator, Baby, Scale, Blend, Trees, Zap, GitCompare, FlaskConical, Menu, X } from "lucide-react";
+import { LayoutDashboard, Users, Wheat, Sprout, Pill, Calculator, Baby, Scale, Blend, Trees, Zap, GitCompare, FlaskConical, BookOpen, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AlimDashboard } from "@/components/alim/alim-dashboard";
@@ -17,6 +17,7 @@ import { AlimAgneaux } from "@/components/alim/alim-agneaux";
 import { AlimBilan } from "@/components/alim/alim-bilan";
 import { AlimMelange } from "@/components/alim/alim-melange";
 import { AlimPaturage } from "@/components/alim/alim-paturage";
+import { AlimGlossaire } from "@/components/alim/alim-glossaire";
 
 type AlimView =
   | "dashboard"
@@ -31,7 +32,8 @@ type AlimView =
   | "agneaux"
   | "bilan"
   | "melange"
-  | "paturage";
+  | "paturage"
+  | "glossaire";
 
 const NAV_ITEMS: { id: AlimView; label: string; description: string; icon: ReactNode }[] = [
   { id: "dashboard", label: "Tableau de bord", description: "Vue d'ensemble", icon: <LayoutDashboard className="h-5 w-5" /> },
@@ -47,6 +49,7 @@ const NAV_ITEMS: { id: AlimView; label: string; description: string; icon: React
   { id: "bilan", label: "Bilan fourrager", description: "Bilan du troupeau", icon: <Scale className="h-5 w-5" /> },
   { id: "melange", label: "Mélange", description: "Mélange de concentrés", icon: <Blend className="h-5 w-5" /> },
   { id: "paturage", label: "Pâturage", description: "Jours d'avance", icon: <Trees className="h-5 w-5" /> },
+  { id: "glossaire", label: "Glossaire", description: "Définitions & références", icon: <BookOpen className="h-5 w-5" /> },
 ];
 
 export default function Home() {
@@ -179,6 +182,7 @@ export default function Home() {
             {view === "bilan" && <AlimBilan />}
             {view === "melange" && <AlimMelange />}
             {view === "paturage" && <AlimPaturage />}
+            {view === "glossaire" && <AlimGlossaire />}
           </div>
         </main>
       </div>
