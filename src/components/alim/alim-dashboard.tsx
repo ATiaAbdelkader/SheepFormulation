@@ -147,7 +147,7 @@ export function AlimDashboard({ onNavigate }: { onNavigate: (v: AlimView) => voi
                 Rationnement des ovins
               </h2>
               <p className="text-sm text-emerald-100 max-w-2xl leading-relaxed">
-                Alim&apos;OVINS v5.1 est l&apos;outil de référence pour formuler des rations
+                OvinFormulation v1.0 est l&apos;outil de référence pour formuler des rations
                 ovines équilibrées : besoins des animaux, valeurs alimentaires des fourrages
                 et concentrés, calcul de ration, bilan fourrager, formulation d&apos;aliment
                 et suivi de pâturage.

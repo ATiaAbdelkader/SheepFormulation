@@ -71,7 +71,7 @@ export default function Home() {
             </div>
             <div className="flex flex-col">
               <h1 className="text-base font-bold leading-tight text-stone-900 sm:text-lg">
-                Alim&apos;OVINS <span className="text-emerald-700">v5.1</span>
+                OvinFormulation <span className="text-emerald-700">v1.0</span>
               </h1>
               <p className="text-[11px] text-stone-500 leading-tight hidden sm:block">
                 Rationnement des ovins
@@ -79,7 +79,7 @@ export default function Home() {
             </div>
           </div>
           <div className="hidden md:flex items-center gap-2 text-xs text-stone-500">
-            <span className="hidden lg:inline">D&apos;après Fabrice RANOUX — Lycée Agricole du Bourbonnais</span>
+            <span className="hidden lg:inline">D&apos;après Abdelkader Atia — AgriSkills Academy</span>
           </div>
         </div>
       </header>
@@ -110,7 +110,7 @@ export default function Home() {
             ))}
           </nav>
           <div className="border-t border-stone-200 p-3 text-[10px] text-stone-400 leading-relaxed">
-            Données issues du tableur Alim&apos;OVINS v5.1 (educagri).<br />
+            Données issues du tableur OvinFormulation v1.0 (educagri).<br />
             Outil pédagogique de formulation de rations ovines.
           </div>
         </aside>
@@ -174,8 +174,8 @@ export default function Home() {
       {/* Footer (sticky at bottom) */}
       <footer className="mt-auto border-t border-stone-200 bg-white">
         <div className="container mx-auto px-4 sm:px-6 py-4 max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-stone-500">
-          <p>Alim&apos;OVINS v5.1 — Rationnement des ovins</p>
-          <p className="hidden sm:block">Source: Fabrice RANOUX, Lycée Agricole du Bourbonnais — BP 1721, 03017 MOULINS cedex</p>
+          <p>OvinFormulation v1.0 — Rationnement des ovins</p>
+          <p className="hidden sm:block">Source: Abdelkader Atia, AgriSkills Academy</p>
         </div>
       </footer>
     </div>

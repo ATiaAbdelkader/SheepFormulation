@@ -1,5 +1,5 @@
-// Alim'OVINS v5.1 - Sheep feed formulation data
-// Source: AlimOVINSv5.1.xlsx by Fabrice RANOUX - Lycée Agricole du Bourbonnais
+// OvinFormulation v1.0 - Sheep feed formulation data
+// Source: Abdelkader Atia - AgriSkills Academy
 
 import data from "./alim-data.json";
 
