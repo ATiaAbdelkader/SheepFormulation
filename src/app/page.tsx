@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { LayoutDashboard, Users, Wheat, Sprout, Pill, Calculator, Baby, Scale, Blend, Trees, Zap, GitCompare, FlaskConical, BookOpen, CalendarDays, Telescope, ShieldCheck, Sparkles, Menu, X } from "lucide-react";
+import { LayoutDashboard, Users, Wheat, Sprout, Pill, Calculator, Baby, Scale, Blend, Trees, Zap, GitCompare, FlaskConical, BookOpen, CalendarDays, Telescope, ShieldCheck, Sparkles, Atom, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AlimDashboard } from "@/components/alim/alim-dashboard";
@@ -22,6 +22,7 @@ import { AlimPaturage } from "@/components/alim/alim-paturage";
 import { AlimGlossaire } from "@/components/alim/alim-glossaire";
 import { AlimCalendrier } from "@/components/alim/alim-calendrier";
 import { AlimPrevision } from "@/components/alim/alim-prevision";
+import { AlimRumenSim } from "@/components/alim/alim-rumen-sim";
 
 type AlimView =
   | "dashboard"
@@ -41,7 +42,8 @@ type AlimView =
   | "paturage"
   | "glossaire"
   | "calendrier"
-  | "prevision";
+  | "prevision"
+  | "rumen-sim";
 
 const NAV_ITEMS: { id: AlimView; label: string; description: string; icon: ReactNode }[] = [
   { id: "dashboard", label: "Tableau de bord", description: "Vue d'ensemble", icon: <LayoutDashboard className="h-5 w-5" /> },
@@ -62,6 +64,7 @@ const NAV_ITEMS: { id: AlimView; label: string; description: string; icon: React
   { id: "glossaire", label: "Glossaire", description: "Définitions & références", icon: <BookOpen className="h-5 w-5" /> },
   { id: "calendrier", label: "Calendrier", description: "Planning du troupeau", icon: <CalendarDays className="h-5 w-5" /> },
   { id: "prevision", label: "Prévision", description: "Valeur des aliments du commerce", icon: <Telescope className="h-5 w-5" /> },
+  { id: "rumen-sim", label: "Simulateur rumen", description: "Visualisation interactive", icon: <Atom className="h-5 w-5" /> },
 ];
 
 export default function Home() {
@@ -199,6 +202,7 @@ export default function Home() {
             {view === "glossaire" && <AlimGlossaire />}
             {view === "calendrier" && <AlimCalendrier />}
             {view === "prevision" && <AlimPrevision />}
+            {view === "rumen-sim" && <AlimRumenSim />}
           </div>
         </main>
       </div>
