@@ -1,0 +1,400 @@
+
+================================================================================
+SHEET: ACCUEIL (rows=33, cols=18)
+================================================================================
+R2: [B2]=ALIM'ovins(v. 5.1) 
+R3: [B3]=Rationnement des ovins
+R4: [B4]=Fabrice RANOUX - Lycée Agricole du Bourbonnais - BP 1721 - 03017 MOULINS cedex - Tous droits réservés
+R7: [C7]=RATION | [E7]=Etablissement d'une ration | [H7]=Cliquez
+R10: [C10]=BILAN | [E10]=Bilan alimentaire et coût | [H10]=Cliquez
+R13: [C13]=COUT | [E13]=Formulation d'aliment et coût de concentré | [H13]=Cliquez
+R16: [C16]=PREVISION | [E16]=Prévision de la valeur alimentaire des aliments du commerce | [H16]=Cliquez
+R19: [C19]=ALIMENTS | [E19]=Saisie de mes  nouveaux aliments | [H19]=Cliquez
+R22: [C22]=FOURRAGES | [E22]=Bilan fourrager du troupeau | [H22]=Cliquez
+R25: [C25]=AGNEAUX | [E25]=Besoins des agneaux à l'engrais | [H25]=Cliquez
+R28: [C28]=PATURAGE | [E28]=Jours d'avance de pâturage | [H28]=Cliquez
+R30: [C30]=Les saisies effectuent uniquement dans les cases "blanches"
+R31: [C31]=Les cases "bleues" correspondent à des menus déroulants
+
+================================================================================
+SHEET: ANIMAL (rows=392, cols=22)
+================================================================================
+R1: [B1]=ALIM'ovins(v. 5.1) 
+R2: [B2]=Rationnement des ovins
+R4: [F4]=Ration
+R6: [C6]=1 Cliquez sur les flèches pour faire votre choix | [L6]=REPARTITION DES BESOINS | [R6]=0.34138498747711576 | [S6]=0.2994605153308033 | [T6]=85.49886268766029 | [U6]=0.5856086485456184
+R7: [R7]=0.7986150125228841 | [S7]=0.7005394846691967 | [T7]=60.50113731233971 | [U7]=0.41439135145438155
+R8: [B8]=Catégorie animal | [C8]=Brebis | [E8]=BESOINS ALIMENTAIRES | [M8]=U.F.L. | [O8]=P.D.I. | [R8]=1.14 | [S8]=1 | [T8]=146 | [U8]=1
+R10: [B10]=Poids vif | [C10]=70 kg | [E10]=CATEGORIE | [L10]=en % des besoins totaux
+R11: [E11]=Brebis  70 kg   Gestante    Double      Semaines - 3 à - 4 | [L11]=ENTRETIEN
+R12: [B12]=Stade physiologique | [C12]=Gestante
+R13: [L13]=128 g PDI/UF
+R14: [B14]=Agnelage            Etat | [C14]=Double | [E14]=APPORTS ALIMENTAIRES RECOMMANDES
+R15: [E15]=U.E.M | [F15]=U.F.L | [G15]=P.D.I. | [H15]=Pabs | [I15]=Caabs | [L15]=PRODUCTION
+R16: [B16]=Période (semaines) | [C16]=Semaines - 3 à - 4 | [E16]=1.71 | [F16]=1.14 | [G16]=146 | [H16]=3.2 | [I16]=3.5
+R17: [C17]=ND: non disponible | [E17]=0.67 UFL / UEM | [G17]=128 g PDI / UFL | [I17]=Ca/P = 1.1
+R23: [C23]=70 | [I23]=30 kg
+R24: [C24]=Brebis | [D24]=Allaitante | [E24]=Semaines - 5 à - 6 | [F24]=Simple | [I24]=40 kg
+R25: [C25]=Bélier | [D25]=Gestante | [E25]=Semaines - 3 à - 4 | [F25]=Double | [I25]=50 kg | [J25]=30 kg  | [K25]=70 kg
+R26: [C26]=Agnelle | [D26]=Vide | [E26]=Semaines - 2 à 0 | [F26]=Inconnu | [I26]=60 kg | [J26]=40 kg  | [K26]=80 kg 
+R27: [C27]=Brebis traite | [D27]=Engrais | [I27]=70 kg | [J27]=50 kg | [K27]=90 kg
+R28: [I28]=80 kg | [J28]=  | [K28]=100 kg
+R29: [C29]=60 kg | [I29]=90 kg | [J29]=  | [K29]= 
+R30: [C30]=70 kg | [I30]=100 kg | [J30]=  | [K30]= 
+R31: [C31]=80 kg  | [D31]=Semaines - 5 à - 6 | [F31]=Semaines 0 à + 3  | [J31]= 
+R32: [C32]=90 kg | [D32]=Semaines - 3 à - 4 | [F32]=Semaines + 4 à + 6
+R33: [C33]=100 kg | [D33]=Semaines - 2 à 0 | [F33]=Semaines + 7 à + 10 | [I33]=Bergerie
+R34: [E34]=2 | [I34]=Plein air
+R38: [C38]=Catégorie | [E38]=UEM | [F38]=UFL | [G38]=PDI | [H38]=Pabs | [I38]=Caabs
+R39: [C39]=Agnelle  100 kg   Croissance           | [E39]=ND | [F39]=ND | [G39]=ND | [H39]=ND | [I39]=ND
+R40: [C40]=Agnelle  100 kg   Entretien           | [E40]=ND | [F40]=ND | [G40]=ND | [H40]=ND | [I40]=ND
+R41: [C41]=Agnelle  100 kg   Flushing           | [E41]=ND | [F41]=ND | [G41]=ND | [H41]=ND | [I41]=ND
+R42: [C42]=Agnelle  30 kg   Croissance           | [D42]=13 | [E42]=1 | [F42]=0.57 | [G42]=52 | [H42]=0.9 | [I42]=1
+R43: [C43]=Agnelle  30 kg   Entretien           | [D43]=15 | [E43]=1 | [F43]=0.44 | [G43]=32 | [H43]=0.6 | [I43]=0.8
+R44: [C44]=Agnelle  30 kg   Flushing           | [D44]=14 | [E44]=1 | [F44]=1 | [G44]=54 | [H44]=0.6 | [I44]=0.8
+R45: [C45]=Agnelle  40 kg   Croissance           | [D45]=16 | [E45]=1.2 | [F45]=0.78 | [G45]=62 | [H45]=1.4 | [I45]=1.5
+R46: [C46]=Agnelle  40 kg   Entretien           | [D46]=18 | [E46]=1.2 | [F46]=0.52 | [G46]=40 | [H46]=0.8 | [I46]=1
+R47: [C47]=Agnelle  40 kg   Flushing           | [D47]=17 | [E47]=1.2 | [F47]=1.08 | [G47]=62 | [H47]=0.8 | [I47]=1
+R48: [C48]=Agnelle  50 kg   Croissance           | [D48]=19 | [E48]=1.3 | [F48]=0.84 | [G48]=69 | [H48]=1.6 | [I48]=1.7
+R49: [C49]=Agnelle  50 kg   Entretien           | [D49]=21 | [E49]=1.3 | [F49]=0.62 | [G49]=47 | [H49]=1 | [I49]=1.2
+R50: [C50]=Agnelle  50 kg   Flushing           | [D50]=20 | [E50]=1.3 | [F50]=0.84 | [G50]=69 | [H50]=1 | [I50]=1.2
+R51: [C51]=Agnelle  60 kg   Croissance           | [E51]=ND | [F51]=ND | [G51]=ND | [H51]=ND | [I51]=ND
+R52: [C52]=Agnelle  60 kg   Entretien           | [E52]=ND | [F52]=ND | [G52]=ND | [H52]=ND | [I52]=ND
+R53: [C53]=Agnelle  60 kg   Flushing           | [E53]=ND | [F53]=ND | [G53]=ND | [H53]=ND | [I53]=ND
+R54: [C54]=Agnelle  70 kg   Croissance           | [E54]=ND | [F54]=ND | [G54]=ND | [H54]=ND | [I54]=ND
+R55: [C55]=Agnelle  70 kg   Entretien           | [E55]=ND | [F55]=ND | [G55]=ND | [H55]=ND | [I55]=ND
+R56: [C56]=Agnelle  70 kg   Flushing           | [E56]=ND | [F56]=ND | [G56]=ND | [H56]=ND | [I56]=ND
+R57: [C57]=Agnelle  80 kg   Croissance           | [E57]=ND | [F57]=ND | [G57]=ND | [H57]=ND | [I57]=ND
+R58: [C58]=Agnelle  80 kg   Entretien           | [E58]=ND | [F58]=ND | [G58]=ND | [H58]=ND | [I58]=ND
+R59: [C59]=Agnelle  80 kg   Flushing           | [E59]=ND | [F59]=ND | [G59]=ND | [H59]=ND | [I59]=ND
+R60: [C60]=Agnelle  90 kg   Croissance           | [E60]=ND | [F60]=ND | [G60]=ND | [H60]=ND | [I60]=ND
+R61: [C61]=Agnelle  90 kg   Entretien           | [E61]=ND | [F61]=ND | [G61]=ND | [H61]=ND | [I61]=ND
+R62: [C62]=Agnelle  90 kg   Flushing           | [E62]=ND | [F62]=ND | [G62]=ND | [H62]=ND | [I62]=ND
+R63: [C63]=Bélier  100 kg   Croissance           | [D63]=10 | [E63]=ND | [F63]=ND | [G63]=ND | [H63]=ND | [I63]=ND
+R64: [C64]=Bélier  100 kg   Entretien           | [D64]=12 | [E64]=2.8 | [F64]=1.1 | [G64]=88 | [H64]=2.2 | [I64]=2.9
+R65: [C65]=Bélier  100 kg   Flushing           | [D65]=11 | [E65]=2.8 | [F65]=1.66 | [G65]=110 | [H65]=2.2 | [I65]=2.9
+R66: [C66]=Bélier  30 kg   Croissance           | [E66]=ND | [F66]=ND | [G66]=ND | [H66]=ND | [I66]=ND
+R67: [C67]=Bélier  30 kg   Entretien           | [E67]=ND | [F67]=ND | [G67]=ND | [H67]=ND | [I67]=ND
+R68: [C68]=Bélier  30 kg   Flushing           | [E68]=ND | [F68]=ND | [G68]=ND | [H68]=ND | [I68]=ND
+R69: [C69]=Bélier  40 kg   Croissance           | [E69]=ND | [F69]=ND | [G69]=ND | [H69]=ND | [I69]=ND
+R70: [C70]=Bélier  40 kg   Entretien           | [E70]=ND | [F70]=ND | [G70]=ND | [H70]=ND | [I70]=ND
+R71: [C71]=Bélier  40 kg   Flushing           | [E71]=ND | [F71]=ND | [G71]=ND | [H71]=ND | [I71]=ND
+R72: [C72]=Bélier  50 kg   Croissance           | [E72]=1.8 | [F72]=1.11 | [G72]=86 | [H72]=1.9 | [I72]=2.4
+R73: [C73]=Bélier  50 kg   Entretien           | [E73]=1.8 | [F73]=0.72 | [G73]=63 | [H73]=1.2 | [I73]=1.4
+R74: [C74]=Bélier  50 kg   Flushing           | [E74]=1.8 | [F74]=1.29 | [G74]=75 | [H74]=1.2 | [I74]=2.7
+R75: [C75]=Bélier  60 kg   Croissance           | [E75]=2 | [F75]=1.19 | [G75]=93 | [H75]=2.1 | [I75]=2.7
+R76: [C76]=Bélier  60 kg   Entretien           | [E76]=2 | [F76]=0.8 | [G76]=60 | [H76]=1.4 | [I76]=1.7
+R77: [C77]=Bélier  60 kg   Flushing           | [E77]=2 | [F77]=1.36 | [G77]=82 | [H77]=1.4 | [I77]=3
+R78: [C78]=Bélier  70 kg   Croissance           | [D78]=1 | [E78]=2.2 | [F78]=1.27 | [G78]=100 | [H78]=2.3 | [I78]=3
+R79: [C79]=Bélier  70 kg   Entretien           | [D79]=3 | [E79]=2.2 | [F79]=0.8800000000000001 | [G79]=67 | [H79]=1.6 | [I79]=2
+R80: [C80]=Bélier  70 kg   Flushing           | [D80]=2 | [E80]=2.2 | [F80]=1.44 | [G80]=89 | [H80]=1.6 | [I80]=2
+
+================================================================================
+SHEET: FOURRAGE (rows=434, cols=26)
+================================================================================
+R1: [B1]=ALIM'ovins(v. 5.1) 
+R2: [B2]=Rationnement des ovins
+R4: [H4]=Ration
+R5: [B5]=                   zone de Plaine (Normandie)                zone de Demi-montagne (Auvergne)
+R6: [E6]=FOURRAGE N° 1                              (Rationné ou à volonté) | [K6]=2 Saisissez les quantités brutes ou cliquez A VOLONTE
+R7: [O7]=ATTENTION ! La capacité d'ingestion est dépassée | [U7]=1.71 | [V7]=0
+R8: [B8]=                1 Cliquez sur les flèches pour faire votre choix | [U8]=0 | [V8]=0
+R9: [B9]=Catégorie fourrage | [E9]=           | [O9]=Capacité d'ingestion | [T9]=0 | [U9]=0 | [V9]=0
+R11: [B11]=Espèce végétale
+R12: [U12]=0 | [V12]=0
+R13: [B13]=Conditions de récolte | [E13]=Valeurs Alimentaires
+R14: [E14]=% M.S. | [F14]=U.E.M. | [G14]=U.F.L | [H14]=P.D.I.N. | [I14]=P.D.I.E. | [J14]=Pabs | [L14]=Caabs
+R15: [B15]=Stade physiologique
+R16: [E16]=ND: non disponible
+R20: [E20]=FOURRAGE N° 2                     (Rationné)
+R21: [B21]=               1 Cliquez sur les flèches pour faire votre choix | [K21]=3 Saisissez les quantités brutes  | [O21]=Densité énergétique de la ration minimale
+R23: [B23]=Catégorie fourrage | [E23]=           | [O23]=DERm | [Q23]=0.6666666666666666
+R25: [B25]=Espèce végétale | [P25]=Densité énergétique du fourrage
+R27: [B27]=Conditions de récolte | [E27]=Valeurs Alimentaires | [O27]=DEF
+R28: [E28]=% M.S. | [F28]=U.E.M | [G28]=U.F.L | [H28]=P.D.I.N. | [I28]=P.D.I.E. | [J28]=Pabs | [L28]=Caabs
+R29: [B29]=Stade physiologique
+R30: [E30]=ND: non disponible
+R40: [J40]=Prairie naturelle | [L40]=Prairie naturelle | [O40]=Prairie naturelle | [Q40]=Blé | [S40]=Pré  | [U40]=Déprimage
+R41: [B41]=0 | [J41]=Fétuque élevée | [L41]=Fétuque | [O41]=Fétuque élevée | [Q41]=Orge | [S41]=Colza fourrager | [U41]=Printemps
+R42: [B42]=1 | [E42]=1er cycle début épiaison (25/05) | [J42]=Luzerne-Dactyle | [L42]=Luzerne-Dactyle | [O42]=Luzerne-Dactyle | [Q42]=Triticale | [S42]=Betterave (distribuée) | [U42]=Fin Printemps
+R43: [C43]=Foin | [E43]=1er cycle  épaison (10/06) | [J43]=Trèfle-Ray Grass | [L43]=Trèfle-Ray Grass | [O43]=Trèfle-Ray Grass | [Q43]=Avoine | [S43]=Vesce | [U43]=Repousses
+R44: [C44]=Ensilage | [E44]=1er cycle début floraison (20/06) | [J44]=Ray Grass Italien | [L44]=Ray Grass Italien | [O44]=Ray Grass Italien | [Q44]=Paille traitée Ammoniac | [S44]=Trèfle blanc | [U44]= 
+R45: [C45]=Paille | [E45]=2ème cycle (regain) | [J45]=Luzerne | [L45]=Luzerne | [O45]=Luzerne | [P45]=  | [Q45]=  | [S45]=Avoine | [U45]= 
+R46: [C46]=Pâture | [E46]=  | [J46]=  | [L46]=Maïs | [O46]=  | [Q46]=  | [S46]=Navet | [U46]= 
+R47: [C47]=Mon fourrage | [E47]= 
+R48: [E48]= 
+R50: [D50]=Ventilé (en grange) | [G50]=Ressuyage (25 % MS) | [L50]=1er cycle début épiaison (25/05) | [P50]=Mauvaises conditions < 30 % MS
+R51: [C51]=Ressuyage (25 % MS) | [D51]=Fané au sol par beau temps | [G51]=Préfané (35 % MS) | [L51]=1er cycle  épaison (10/06) | [P51]=Conditions normales 25  % MS
+R52: [C52]=Préfané (35 % MS) | [D52]=Fané au sol < 10 jours) | [G52]=Enrubanné (> 45 % MS) | [L52]=1er cycle début floraison (20/06) | [P52]=Conditions normales 30  % MS
+R53: [C53]=Enrubanné (> 45 % MS) | [D53]=  | [G53]=  | [L53]=2ème cycle (regain) | [P53]=Conditions normales 35  % MS
+R54: [C54]=  | [D54]=  | [G54]=  | [L54]=  | [P54]=Très bonnes conditions (> 35 % MS)
+R55: [C55]=  | [D55]=  | [E55]=Fourrage 1 | [G55]=  | [L55]=  | [P55]= 
+R56: [C56]=  | [E56]=Fourrage 2
+R57: [E57]=Fourrage 3 | [J57]=Prairie naturelle | [L57]=Prairie naturelle | [O57]=Prairie naturelle | [Q57]=Blé | [S57]=Pré  | [U57]=Déprimage
+R58: [J58]=Fétuque élevée | [L58]=Fétuque | [O58]=Fétuque élevée | [Q58]=Orge | [S58]=Colza fourrager | [U58]=Printemps
+R59: [E59]=1er cycle début épiaison (25/05) | [J59]=Luzerne-Dactyle | [L59]=Luzerne-Dactyle | [O59]=Luzerne-Dactyle | [Q59]=Triticale | [S59]=Betterave (distribuée) | [U59]=Fin Printemps
+R60: [C60]=Foin | [E60]=1er cycle  épaison (10/06) | [J60]=Trèfle-Ray Grass | [L60]=Trèfle-Ray Grass | [O60]=Trèfle-Ray Grass | [Q60]=Avoine | [S60]=Vesce | [U60]=Repousses
+R61: [C61]=Ensilage | [E61]=1er cycle début floraison (20/06) | [J61]=Ray Grass Italien | [L61]=Ray Grass Italien | [O61]=Ray Grass Italien | [Q61]=Paille traitée Ammoniac | [S61]=Trèfle blanc | [U61]= 
+R62: [C62]=Paille | [E62]=2ème cycle (regain) | [J62]=Luzerne | [L62]=Luzerne | [O62]=Luzerne | [P62]=  | [Q62]=  | [S62]=Avoine | [U62]= 
+R63: [C63]=Pâture | [E63]=  | [J63]=  | [L63]=Maïs | [O63]=  | [Q63]=  | [S63]=Navet | [U63]= 
+R64: [C64]=Mon fourrage | [E64]= 
+R65: [E65]= 
+R67: [D67]=Ventilé (en grange) | [G67]=Ressuyage (25 % MS) | [L67]=1er cycle début épiaison (25/05) | [P67]=Mauvaises conditions < 30 % MS
+R68: [C68]=Ressuyage (25 % MS) | [D68]=Fané au sol par beau temps | [G68]=Préfané (35 % MS) | [L68]=1er cycle  épaison (10/06) | [P68]=Conditions normales 25  % MS
+R69: [C69]=Préfané (35 % MS) | [D69]=Fané au sol < 10 jours) | [G69]=Enrubanné (> 45 % MS) | [L69]=1er cycle début floraison (20/06) | [P69]=Conditions normales 30  % MS
+R70: [C70]=Enrubanné (> 45 % MS) | [D70]=  | [G70]=  | [L70]=2ème cycle (regain) | [P70]=Conditions normales 35  % MS
+R71: [C71]=  | [D71]=  | [G71]=  | [L71]=  | [P71]=Très bonnes conditions (> 35 % MS)
+R72: [C72]=  | [D72]=  | [G72]=  | [L72]=  | [P72]= 
+R73: [D73]=  | [G73]=  | [L73]=  | [P73]= 
+R74: [L74]= 
+R77: [D77]=% MS | [E77]=UEM | [F77]=UEB | [G77]=UFL | [H77]=UFV | [I77]=PDIN | [J77]=PDIE | [K77]=Pabs | [L77]=Caabs
+R78: [C78]=Betterave fourragère | [D78]=13 | [E78]=0.91 | [F78]=1.2 | [G78]=1.15 | [H78]=1.16 | [I78]=62 | [J78]=86 | [K78]=1.1 | [L78]=0.5
+R79: [C79]=Ensilage    Fétuque    Enrubanné (> 45 % MS)  1er cycle  épaison (10/06) | [D79]=55 | [E79]=1.53 | [F79]=1.26 | [G79]=0.67 | [H79]=0.59 | [I79]=66 | [J79]=68 | [K79]=1.4 | [L79]=1.3 | [M79]=27
+R80: [C80]=Ensilage    Fétuque    Enrubanné (> 45 % MS)  1er cycle début épiaison (25/05) | [D80]=55 | [E80]=1.41 | [F80]=1.14 | [G80]=0.73 | [H80]=0.65 | [I80]=82 | [J80]=75 | [K80]=1.6 | [L80]=1.3 | [M80]=26
+
+================================================================================
+SHEET: CONCENTRE (rows=83, cols=25)
+================================================================================
+R1: [B1]=ALIM'ovins(v. 5.1) 
+R2: [B2]=Rationnement des ovins 
+R4: [I4]=Ration
+R5: [J5]=3 Saisissez les quantités brutes distribuées  ou cliquez sur "Mélange"
+R6: [B6]=1 Cliquez sur les flèches pour faire votre choix | [E6]=CONCENTRE N°1 | [N6]=Valeurs des concentrés
+R7: [T7]=#DIV/0!
+R8: [B8]=Catégorie  | [E8]=Valeurs alimentaires / kg brut | [T8]=#DIV/0!
+R9: [E9]=U.F.L. | [F9]=P.D.I.N. | [G9]=P.D.I.E. | [H9]=Pabs | [I9]=Caabs | [S9]=0 | [T9]=0
+R10: [B10]=Espèce | [S10]=0 | [T10]=0
+R11: [O11]=UFL | [Q11]=PDIN
+R13: [B13]=2 Cliquez sur les flèches pour faire votre choix | [E13]=CONCENTRE N°2
+R15: [B15]=Catégorie  | [E15]=Valeurs alimentaires / kg brut
+R16: [E16]=U.F.L. | [F16]=P.D.I.N. | [G16]=P.D.I.E. | [H16]=Pabs | [I16]=Caabs
+R17: [B17]=Espèce
+R22: [E22]=Pois | [F22]=Blé | [G22]=Colza 35 | [I22]=Pois | [K22]=Drêches de brasserie
+R23: [C23]=Céréale | [E23]=Lupin | [F23]=Orge | [G23]=Soja 48 | [I23]=Lupin | [K23]=Graines de Colza
+R24: [C24]=Tourteau | [E24]=Féverole | [F24]=Avoine | [G24]=Tournesol | [I24]=Féverole | [K24]=Drêches de blé
+R25: [C25]=Protéagineux | [E25]=Vesce | [F25]=Triticale | [G25]=Lin | [I25]=Vesce | [K25]=Huile de Colza
+R26: [C26]=Divers | [E26]=Soja extrudé | [F26]=Seigle | [G26]=Arachide | [I26]=Soja extrudé | [K26]=Luzerne deshydratée
+R27: [C27]=Mon concentré | [E27]=  | [F27]=Maïs grain | [G27]=Coton déshuilé | [I27]=  | [K27]=Mélasse
+R28: [C28]=Mélange fermier | [E28]=  | [F28]=Sarrazin | [G28]=Tournesol décortiqué | [I28]=  | [K28]=Lait écrémé en poudre
+R29: [E29]=  | [F29]=Sorgho | [G29]=Soja tanné | [I29]=  | [K29]=Pulpe de Betterave
+R31: [E31]=Pois | [F31]=Blé | [G31]=Colza 35 | [I31]=Pois | [K31]=Drêches de brasserie
+R32: [C32]=Céréale | [E32]=Lupin | [F32]=Orge | [G32]=Soja 48 | [I32]=Lupin | [K32]=Graines de Colza
+R33: [C33]=Tourteau | [E33]=Féverole | [F33]=Avoine | [G33]=Tournesol | [I33]=Féverole | [K33]=Drêches de blé
+R34: [C34]=Protéagineux | [E34]=Vesce | [F34]=Triticale | [G34]=Lin | [I34]=Vesce | [K34]=Huile de Colza
+R35: [C35]=Divers | [E35]=Soja extrudé | [F35]=Seigle | [G35]=Arachide | [I35]=Soja extrudé | [K35]=Luzerne deshydratée
+R36: [C36]=Mes aliments | [E36]=  | [F36]=Maïs grain | [G36]=Coton déshuilé | [I36]=  | [K36]=Mélasse
+R37: [E37]=  | [F37]=Sarrazin | [G37]=Tournesol décortiqué | [I37]=  | [K37]=Lait écrémé en poudre
+R38: [E38]=  | [F38]=Sorgho | [G38]=Soja tanné | [I38]=  | [K38]=Pulpe de Betterave
+R41: [C41]=Catégorie | [D41]=C | [E41]=U.F.L. | [F41]=P.D.I.N. | [G41]=P.D.I.E. | [H41]=Pabs | [I41]=Caabs
+R42: [C42]=Arachide | [D42]=90 | [E42]=1 | [F42]=347 | [G42]=215 | [H42]=3.69 | [I42]=1.08 | [K42]=4.1 | [N42]=1.2
+R43: [C43]=Avoine | [D43]=88 | [E43]=0.77 | [F43]=61 | [G43]=61 | [H43]=2.3760000000000003 | [I43]=0.616 | [K43]=2.7 | [N43]=0.7
+R44: [C44]=Blé | [D44]=87 | [E44]=1.02 | [F44]=70 | [G44]=89 | [H44]=2.262 | [I44]=0.34800000000000003 | [K44]=2.6 | [N44]=0.4
+R45: [C45]=Colza 35 | [D45]=89 | [E45]=0.85 | [F45]=219 | [G45]=138 | [H45]=8.187999999999999 | [I45]=4.628 | [K45]=9.2 | [N45]=5.2
+R46: [C46]=Colza tanné | [E46]=0.85 | [F46]=255 | [G46]=246 | [H46]=9.2 | [I46]=5.2
+R47: [C47]=Corn gluten | [E47]=0.93 | [F47]=127 | [G47]=102 | [H47]=6.8 | [I47]=1
+R48: [C48]=Coton | [D48]=91 | [E48]=0.94 | [F48]=131 | [G48]=77 | [H48]=4.641 | [I48]=0.91 | [K48]=5.1 | [N48]=1
+R49: [C49]=Coton déshuilé | [E49]=0.8 | [F49]=254 | [G49]=173 | [H49]=7.9 | [I49]=1.5
+R50: [C50]=Drêches de blé | [E50]=0.96 | [F50]=228 | [G50]=143 | [H50]=5.4 | [I50]=2
+R51: [C51]=Drêches de brasserie | [D51]=92 | [E51]=0.76 | [F51]=178 | [G51]=157 | [H51]=4.508000000000001 | [I51]=1.1960000000000002 | [K51]=4.9 | [N51]=1.3
+R52: [C52]=Féverole | [D52]=86 | [E52]=1.03 | [F52]=170 | [G52]=97 | [H52]=3.526 | [I52]=0.774 | [K52]=4.1 | [N52]=0.9
+R53: [C53]=Graine de Colza | [D53]=92 | [E53]=1.68 | [F53]=12 | [G53]=61 | [H53]=4.876 | [I53]=2.576 | [K53]=5.3 | [N53]=2.8
+R54: [C54]=Huile de colza | [D54]=100 | [E54]=2.73 | [F54]=0 | [G54]=0 | [H54]=0 | [I54]=0 | [K54]=0 | [N54]=0
+R55: [C55]=Lin | [D55]=89 | [E55]=0.88 | [F55]=227 | [G55]=179 | [H55]=5.34 | [I55]=2.492 | [K55]=6 | [N55]=2.8
+R56: [C56]=Lupin | [D56]=89 | [E56]=1.18 | [F56]=213 | [G56]=106 | [H56]=2.8480000000000003 | [I56]=1.8690000000000002 | [K56]=3.2 | [N56]=2.1
+R57: [C57]=Luzerne déhydratée | [D57]=91 | [E57]=0.62 | [F57]=103 | [G57]=91 | [H57]=1.7289999999999999 | [I57]=5.915 | [K57]=1.9 | [N57]=6.5
+R58: [C58]=Maïs grain | [D58]=86 | [E58]=1.06 | [F58]=64 | [G58]=84 | [H58]=1.8920000000000001 | [I58]=0.258 | [K58]=2.2 | [N58]=0.3
+R59: [C59]=Mélasse | [D59]=76 | [E59]=0.75 | [F59]=63 | [G59]=54 | [H59]=0.15200000000000002 | [I59]=0.38 | [K59]=0.2 | [N59]=0.5
+R60: [C60]=Orge | [D60]=87 | [E60]=0.95 | [F60]=69 | [G60]=87 | [H60]=2.61 | [I60]=0.435 | [K60]=3 | [N60]=0.5
+R61: [C61]=Pois | [D61]=86 | [E61]=1.04 | [F61]=130 | [G61]=83 | [H61]=2.924 | [I61]=0.602 | [K61]=3.4 | [N61]=0.7
+R62: [C62]=Poudre de lait écrémé | [D62]=95 | [E62]=1.15 | [F62]=196 | [G62]=75 | [H62]=9.214999999999998 | [I62]=11.114999999999998 | [K62]=9.7 | [N62]=11.7
+R63: [C63]=Pulpe de betterave | [D63]=89 | [E63]=0.89 | [F63]=59 | [G63]=97 | [H63]=0.801 | [I63]=2.67 | [K63]=0.9 | [N63]=3
+R64: [C64]=Sarrazin | [D64]=87 | [E64]=0.81 | [F64]=77 | [G64]=82 | [H64]=2.262 | [I64]=0.435 | [K64]=2.6 | [N64]=0.5
+R65: [C65]=Seigle | [D65]=87 | [E65]=1.03 | [F65]=59 | [G65]=85 | [H65]=2.262 | [I65]=0.609 | [K65]=2.6 | [N65]=0.7
+R66: [C66]=Soja 48 | [D66]=88 | [E66]=1.06 | [F66]=331 | [G66]=229 | [H66]=4.4 | [I66]=1.848 | [K66]=5 | [N66]=2.1
+R67: [C67]=Soja extrudé | [E67]=1.27 | [F67]=262 | [G67]=214 | [H67]=4.6 | [I67]=2
+R68: [C68]=Soja tanné | [E68]=1.06 | [F68]=389 | [G68]=374 | [H68]=5 | [I68]=2.1
+R69: [C69]=Son de blé | [E69]=0.82 | [F69]=94 | [G69]=80 | [H69]=8.2 | [I69]=0.9
+R70: [C70]=Sorgho | [D70]=87 | [E70]=1.05 | [F70]=67 | [G70]=87 | [H70]=2.088 | [I70]=0.17400000000000002 | [K70]=2.4 | [N70]=0.2
+R71: [C71]=Tournesol | [D71]=89 | [E71]=0.56 | [F71]=178 | [G71]=93 | [H71]=6.586 | [I71]=2.136 | [K71]=7.4 | [N71]=2.4
+R72: [C72]=Tournesol décortiqué | [E72]=0.66 | [F72]=219 | [G72]=115 | [H72]=7.8 | [I72]=2.5
+R73: [C73]=Triticale | [D73]=87 | [E73]=1.01 | [F73]=63 | [G73]=84 | [H73]=2.61 | [I73]=0.435 | [K73]=3 | [N73]=0.5
+R74: [C74]=Urée | [D74]=98 | [E74]=0 | [F74]=1443 | [G74]=0 | [H74]=0 | [I74]=0 | [K74]=0 | [N74]=0
+R75: [C75]=Vesce | [D75]=89 | [E75]=1.02 | [F75]=161 | [G75]=90 | [H75]=3.3819999999999997 | [I75]=0.89 | [K75]=3.8 | [N75]=1
+
+================================================================================
+SHEET: CMV (rows=52, cols=25)
+================================================================================
+R1: [B1]=ALIM'ovins(v. 5.1) 
+R2: [B2]=Rationnement des ovins
+R4: [I4]=Ration
+R6: [B6]=Choisir le C.M.V. ayant le rapport "Ca / P" le plus approchant du déficit | [P6]=Pabs | [Q6]=   Caabs
+R7: [C7]=1 Cliquez sur les flèches pour choisir le CMV | [G7]=Ca / P ration (avant correction) | [L7]=C.M.V. choisi | [O7]=100 % des A.A.R. | [U7]=3.2 | [V7]=3.5
+R8: [B8]=Type | [G8]=Utilisez un CMV avec 1 fois plus de Ca que de P | [L8]=C.M.V. | [O8]=Avant correction
+R10: [T10]=0 | [U10]=#VALUE! | [V10]=#VALUE! | [W10]=0
+R11: [B11]=                       2  Saisir la quantité de CMV choisie  ou accepter la quantité proposée | [L11]=Déficit Pabs | [P11]=#VALUE! | [R11]=#VALUE! | [T11]=1 | [U11]=1 | [V11]=1 | [W11]=1
+R12: [D12]=g. | [G12]=Valeurs alimentaires / kg brut | [L12]=3.2 | [O12]=100 % des A.A.R.
+R13: [G13]=Pabs | [I13]=Caabs | [L13]=Déficit Caabs | [T13]=0 | [U13]=#VALUE! | [V13]=0 | [W13]=#VALUE! | [X13]=#VALUE!
+R14: [B14]=Ca / P | [L14]=3.5 | [O14]=Après correction | [T14]=0 | [U14]=#VALUE! | [V14]=1 | [W14]=1 | [X14]=1
+R16: [P16]=#VALUE! | [R16]=#VALUE!
+R20: [C20]= 0 - 27  | [F20]=2700 | [G20]=0.1 | [H20]=108 | [I20]=0.1 | [J20]=270
+R21: [C21]= 10 - 20 | [F21]=2 | [G21]=65 | [H21]=80 | [I21]=100 | [J21]=200
+R22: [C22]= 10 - 6 | [F22]=0.6 | [G22]=65 | [H22]=24 | [I22]=100 | [J22]=60
+R23: [C23]= 12 - 12 | [F23]=1 | [G23]=78 | [H23]=48 | [I23]=120 | [J23]=120
+R24: [C24]= 2 - 28 | [F24]=14 | [G24]=13 | [H24]=112 | [I24]=20 | [J24]=280 | [L24]=False
+R25: [C25]= 3 - 27 | [F25]=9 | [G25]=19.5 | [H25]=108 | [I25]=30 | [J25]=270
+R26: [C26]= 4 - 21 | [F26]=5.25 | [G26]=26 | [H26]=84 | [I26]=40 | [J26]=210
+R27: [C27]= 5 - 20 | [F27]=4 | [G27]=32.5 | [H27]=80 | [I27]=50 | [J27]=200
+R28: [C28]= 5 - 22 | [F28]=4.4 | [G28]=32.5 | [H28]=88 | [I28]=50 | [J28]=220
+R29: [C29]= 5 - 25 | [F29]=5 | [G29]=32.5 | [H29]=100 | [I29]=50 | [J29]=250
+R30: [C30]= 6 - 18 | [F30]=3 | [G30]=39 | [H30]=72 | [I30]=60 | [J30]=180
+R31: [C31]= 6 - 6 | [F31]=1 | [G31]=39 | [H31]=24 | [I31]=60 | [J31]=60
+R32: [C32]= 7 - 21 | [F32]=3 | [G32]=45.5 | [H32]=84 | [I32]=70 | [J32]=210
+R33: [C33]= 7 - 23 | [F33]=3.2857142857142856 | [G33]=45.5 | [H33]=92 | [I33]=70 | [J33]=230 | [L33]= 
+R34: [C34]= 8 - 12  | [F34]=1.5 | [G34]=52 | [H34]=48 | [I34]=80 | [J34]=120
+R35: [C35]= 8 - 16  | [F35]=2 | [G35]=52 | [H35]=64 | [I35]=80 | [J35]=160
+R36: [C36]= 8 - 18 | [F36]=2.25 | [G36]=52 | [H36]=72 | [I36]=80 | [J36]=180
+R37: [C37]= 8 - 24 | [F37]=3 | [G37]=52 | [H37]=96 | [I37]=80 | [J37]=240
+R38: [C38]= 9 - 14 | [F38]=1.5555555555555556 | [G38]=58.5 | [H38]=56 | [I38]=90 | [J38]=140
+R39: [C39]= 9 - 27 | [F39]=3 | [G39]=58.5 | [H39]=108 | [I39]=90 | [J39]=270
+R40: [C40]=CaCO3 | [F40]=#DIV/0! | [G40]=0 | [H40]=160 | [I40]=0 | [J40]=400
+R42: [E42]=#VALUE! | [G42]=#VALUE!
+
+================================================================================
+SHEET: RATION (rows=34, cols=34)
+================================================================================
+R1: [B1]=ALIM'ovins(v. 5.1) 
+R2: [B2]=Rationnement des ovins
+R4: [F4]=Ration
+R6: [B6]=Catégorie | [E6]=Apports Alimentaires Recommandés | [L6]=REPARTITION DES APPORTS | [T6]=UFL | [U6]=PDIN | [V6]=PDIE | [W6]=P | [X6]=Ca
+R7: [E7]=UEM | [F7]=UFL | [G7]=PDIN | [H7]=PDIE | [I7]=Pabs | [J7]=Caabs | [L7]=en % des besoins alimentaires | [T7]=#VALUE! | [U7]=#VALUE! | [V7]=#VALUE! | [W7]=#VALUE! | [X7]=#VALUE!
+R8: [B8]=Brebis  70 kg   Gestante    Double      Semaines - 3 à - 4 | [E8]=1.71 | [F8]=1.14 | [G8]=146 | [H8]=146 | [I8]=3.2 | [J8]=3.5 | [T8]=1 | [U8]=1 | [V8]=1 | [W8]=1 | [X8]=1
+R10: [B10]=Quantité   kg | [C10]=Aliments                                       (valeurs / kg MS) | [D10]=Valeurs alimentaires
+R11: [D11]=MS | [E11]=UEM | [F11]=UFL | [G11]=PDIN | [H11]=PDIE | [I11]=Pabs | [J11]=Caabs
+R12: [C12]=          
+R13: [M13]=#VALUE! | [N13]=#VALUE! | [P13]=#VALUE! | [Q13]=#VALUE! | [R13]=#VALUE!
+R14: [C14]=           | [L14]=Part  des fourrages et des concentrés dans la ration | [O14]= MS | [Q14]=   UFL | [R14]=PDIN
+R16: [C16]=Ration de base | [L16]=Concentrés
+R18: [B18]=Différence | [E18]=#VALUE! | [F18]=#VALUE! | [G18]=#VALUE! | [H18]=#VALUE! | [I18]=#VALUE! | [J18]=#VALUE! | [T18]=Fourrage 1 | [V18]=0 | [X18]=0 | [Z18]=0
+R19: [L19]=Fourrages | [T19]=Fourrage 2 | [V19]=0 | [X19]=0 | [Z19]=0
+R20: [T20]=Concentré 1
+R21: [T21]=Concentré 2
+R23: [L23]=REPARTITION DES ALIMENTS
+R24: [C24]=Concentrés
+R26: [B26]=RMIC = | [C26]=  PDIN - PDIE | [E26]= *
+R27: [C27]=        UFL
+R29: [C29]=TOTAL RATION | [F29]=#VALUE! | [G29]=#VALUE! | [H29]=#VALUE! | [I29]=#VALUE! | [J29]=#VALUE!
+R31: [C31]=Différence
+R32: [A32]= * RMIC < - 12 (Brebis allaitantes - agneaux simples)                         RMIC < - 6 (Brebis allaitantes - agneaux doubles)
+
+================================================================================
+SHEET: BILAN (rows=74, cols=20)
+================================================================================
+R1: [B1]=ALIM'ovins(v. 5.1) 
+R2: [B2]=Rationnement des ovins 
+R4: [I4]=Bilan alimentaire
+R7: [C7]=Saisir l'effectif d'animaux du lot | [J7]=Brebis  70 kg   Gestante    Double      Semaines - 3 à - 4 | [N7]=Cout de concentré (€ / animal / jour)      
+R8: [F8]=
+R10: [C10]=Saisir la durée  d'alimentation  (en jours)
+R11: [F11]=
+R14: [C14]=QUANTITE DE FOURRAGE  | [P14]=Pour 1 tonne de ration complète
+R15: [M15]=tonnes (brut) | [R15]=kg
+R18: [M18]=tonnes (brut) | [R18]=kg
+R21: [Q21]=Pourcentage de concentré
+R23: [C23]=COUT DE CONCENTRE | [G23]=kg / jour | [H23]=Besoins pour la période | [K23]=Coût | [M23]=Cout total | [Q23]=0
+R24: [K24]=    unitaire
+R26: [I26]=tonnes | [L26]= / t | [Q26]=0 | [R26]=kg
+R28: [I28]=tonnes | [L28]= / t | [Q28]=0 | [R28]=kg
+R30: [I30]=tonnes | [L30]= / t | [Q30]=0 | [R30]=kg
+R32: [C32]=COUT TOTAL DE CONCENTRE (en € pour le lot et pour la période) | [Q32]=0 | [R32]=kg
+R40: [B40]=1 | [C40]=Janvier | [D40]=2010
+R41: [B41]=2 | [C41]=Février | [D41]=2011
+R42: [B42]=3 | [C42]=Mars | [D42]=2012
+R43: [B43]=4 | [C43]=Avril | [D43]=2013
+R44: [B44]=5 | [C44]=Mai | [D44]=2014
+R45: [B45]=6 | [C45]=Juin | [D45]=2015
+R46: [B46]=7 | [C46]=Juillet | [D46]=2016
+R47: [B47]=8 | [C47]=Août
+R48: [B48]=9 | [C48]=Septembre
+R49: [B49]=10 | [C49]=Octobre
+R50: [B50]=11 | [C50]=Novembre
+R51: [B51]=12 | [C51]=Décembre
+R52: [B52]=13
+R53: [B53]=14
+R54: [B54]=15
+R55: [B55]=16
+R56: [B56]=17
+R57: [B57]=18
+R58: [B58]=19
+R59: [B59]=20
+R60: [B60]=21
+R61: [B61]=22
+R62: [B62]=23
+R63: [B63]=24
+R64: [B64]=25
+R65: [B65]=26
+R66: [B66]=27
+R67: [B67]=28
+R68: [B68]=29
+R69: [B69]=30
+R70: [B70]=31
+
+================================================================================
+SHEET: BESOINS (rows=51, cols=28)
+================================================================================
+R1: [B1]=ALIM'ovins(v. 5.1) 
+R2: [B2]=Rationnement des ovins
+R4: [B4]=BILAN FOURRAGER
+R6: [B6]=EVALUATION DES BESOINS | [R6]=BILAN
+R8: [B8]=Lot | [D8]=Catégorie | [F8]=Effectif | [H8]=U.G.B | [J8]=Consommation (kg MS/j) | [L8]=Durée (jours) | [N8]=Besoins en MS | [R8]=Stocks disponibles
+R9: [B9]=Lot N°1
+R10: [R10]=Besoins du troupeau
+R11: [B11]=Lot N°2
+R13: [B13]=Lot N°3 | [R13]=Marge de sécurité | [T13]=4.16 | [U13]=semaine(s) | [V13]=8 | [W13]=%
+R15: [B15]=Lot N°4 | [R15]=BILAN FOURRAGER                ( hors paille)
+R17: [B17]=Lot N°5
+R18: [R18]=en pourcentage des besoins
+R19: [B19]=Lot N°6
+R21: [B21]=Lot N°7
+R23: [B23]=Lot N°8 | [R23]=BILAN FOURRAGER                (avec paille)
+R25: [B25]=Lot N°9
+R26: [R26]=en pourcentage des besoins
+R27: [B27]=Lot N°10
+R41: [D41]=Agneau à l'engrais | [E41]=0.5 | [F41]=0.05
+R42: [D42]=Agnelle - 6 mois | [E42]=0.5 | [F42]=0.05
+R43: [D43]=Agnelle + 6 mois | [E43]=1 | [F43]=0.07 | [S43]=Brebis | [T43]=0.15
+R44: [D44]=Bélier - 1 an | [E44]=1.5 | [F44]=0.15 | [S44]=Agnelles - 6 mois | [T44]=0.05
+R45: [D45]=Bélier - 6 mois | [E45]=1 | [F45]=0.05 | [S45]=Agnelles 6 mois et + | [T45]=0.07
+R46: [D46]=Bélier adulte | [E46]=2.5 | [F46]=0.15 | [S46]=Béliers - 6 mois | [T46]=0.05
+R47: [D47]=Brebis allaitante | [E47]=2 | [F47]=0.15 | [S47]=Béliers 6 mois et + | [T47]=0.15
+R48: [D48]=Brebis de réforme | [E48]=2 | [F48]=0.15 | [S48]=Mâle castré de +12 mois | [T48]=0.15
+R49: [D49]=Brebis gestante | [E49]=1.5 | [F49]=0.15 | [S49]=Agneaux de boucherie | [T49]=0.05
+R50: [D50]=Brebis traite | [E50]=2 | [F50]=0.15
+R51: [D51]=Brebis vide | [E51]=2 | [F51]=0.15
+
+================================================================================
+SHEET: MELANGE (rows=31, cols=15)
+================================================================================
+R1: [B1]=ALIM'ovins(v. 5.0) 
+R2: [B2]=Rationnement des bovins allaitants
+R5: [B5]=CALCUL DE LA COMPOSITION D'UN MELANGE DE 2 CONCENTRES
+R6: [B6]=Système de 2 équations et 2 inconnues (x et y)
+R8: [B8]=1 Mélange n'est pas nécessaire ! | [F8]=x | [G8]= +  | [I8]=y
+R9: [F9]=kg | [I9]=kg
+R11: [C11]=Déficit
+R12: [B12]=UFL | [D12]= =  | [E12]=0.001 | [F12]=x | [G12]= +  | [H12]=0.001 | [I12]=y
+R14: [B14]=PDIN | [D14]= =  | [E14]=0.001 | [F14]=x | [G14]= +  | [H14]=0.001 | [I14]=y
+R16: [B16]=VERIFIER vos concentrés, le mélange n'est pas adapté !
+R20: [E20]=#VALUE! | [H20]=#VALUE!
+R22: [E22]=0 | [H22]=0
+R27: [C27]=(C14-(C12*E14)/E12)/(H14-((H12*E14)/E12))))
+R28: [C28]=(C12-(H12*H9))/E12)
+R30: [C30]=SI(E12=0,001;0;SI(C12<=0,1;0;SI(C12="";"";(C12-(H12*H9))/E12)))
+R31: [C31]=SI(H12=0,001;0;SI(C14<=0,1;0;SI(C12="";"";(C14-(C12*E14)/E12)/(H14-((H12*E14)/E12)))))
+
+================================================================================
+SHEET: COUT (rows=89, cols=22)
+================================================================================
+R1: [B1]=ALIM'ovins(v. 5.1) 
+R2: [B2]=Rationnement des ovins
+R4: [F4]=Formulation d'aliment et coût
+R5: [B5]=FORMULATION ET CALCUL DU COUT D'UN MELANGE FERMIER | [P5]=Répartition des matières premières
