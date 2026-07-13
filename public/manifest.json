@@ -1,0 +1,44 @@
+{
+  "name": "OvinFormulation — Rationnement des ovins",
+  "short_name": "OvinFormulation",
+  "description": "Outil pédagogique de formulation de rations pour ovins : besoins des animaux, valeurs alimentaires, calcul de ration, bilan fourrager, suivi de pâturage.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fafaf9",
+  "theme_color": "#047857",
+  "orientation": "portrait-primary",
+  "categories": ["education", "agriculture", "productivity"],
+  "lang": "fr",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Calculer une ration",
+      "url": "/?view=ration",
+      "description": "Établir une ration équilibrée"
+    },
+    {
+      "name": "Assistant IA",
+      "url": "/?view=ai-ration",
+      "description": "Générer une ration par IA"
+    },
+    {
+      "name": "Optimisation",
+      "url": "/?view=optimisation",
+      "description": "Formulation au moindre coût"
+    }
+  ]
+}
