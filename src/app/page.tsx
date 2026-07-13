@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { LayoutDashboard, Users, Wheat, Sprout, Pill, Calculator, Baby, Scale, Blend, Trees, Zap, GitCompare, Menu, X } from "lucide-react";
+import { LayoutDashboard, Users, Wheat, Sprout, Pill, Calculator, Baby, Scale, Blend, Trees, Zap, GitCompare, FlaskConical, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AlimDashboard } from "@/components/alim/alim-dashboard";
@@ -12,6 +12,7 @@ import { AlimCMV } from "@/components/alim/alim-cmv";
 import { AlimRation } from "@/components/alim/alim-ration";
 import { AlimOptimisation } from "@/components/alim/alim-optimisation";
 import { AlimComparer } from "@/components/alim/alim-comparer";
+import { AlimCustomFeeds } from "@/components/alim/alim-custom-feeds";
 import { AlimAgneaux } from "@/components/alim/alim-agneaux";
 import { AlimBilan } from "@/components/alim/alim-bilan";
 import { AlimMelange } from "@/components/alim/alim-melange";
@@ -26,6 +27,7 @@ type AlimView =
   | "ration"
   | "optimisation"
   | "comparer"
+  | "custom-feeds"
   | "agneaux"
   | "bilan"
   | "melange"
@@ -36,6 +38,7 @@ const NAV_ITEMS: { id: AlimView; label: string; description: string; icon: React
   { id: "ration", label: "Ration", description: "Établir une ration", icon: <Calculator className="h-5 w-5" /> },
   { id: "optimisation", label: "Optimisation", description: "Moindre coût (LP)", icon: <Zap className="h-5 w-5" /> },
   { id: "comparer", label: "Comparer", description: "Comparer 2 rations", icon: <GitCompare className="h-5 w-5" /> },
+  { id: "custom-feeds", label: "Mes aliments", description: "Aliments personnalisés", icon: <FlaskConical className="h-5 w-5" /> },
   { id: "animals", label: "Animaux", description: "Besoins alimentaires", icon: <Users className="h-5 w-5" /> },
   { id: "fourrages", label: "Fourrages", description: "Base fourrages", icon: <Wheat className="h-5 w-5" /> },
   { id: "concentres", label: "Concentrés", description: "Base concentrés", icon: <Sprout className="h-5 w-5" /> },
@@ -167,6 +170,7 @@ export default function Home() {
             {view === "ration" && <AlimRation />}
             {view === "optimisation" && <AlimOptimisation />}
             {view === "comparer" && <AlimComparer />}
+            {view === "custom-feeds" && <AlimCustomFeeds />}
             {view === "animals" && <AlimAnimals />}
             {view === "fourrages" && <AlimFourrages />}
             {view === "concentres" && <AlimConcentres />}
