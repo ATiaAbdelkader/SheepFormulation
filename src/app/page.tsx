@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { LayoutDashboard, Users, Wheat, Sprout, Pill, Calculator, Baby, Scale, Blend, Trees, Zap, GitCompare, FlaskConical, BookOpen, CalendarDays, Telescope, ShieldCheck, Menu, X } from "lucide-react";
+import { LayoutDashboard, Users, Wheat, Sprout, Pill, Calculator, Baby, Scale, Blend, Trees, Zap, GitCompare, FlaskConical, BookOpen, CalendarDays, Telescope, ShieldCheck, Sparkles, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AlimDashboard } from "@/components/alim/alim-dashboard";
@@ -10,6 +10,7 @@ import { AlimFourrages } from "@/components/alim/alim-fourrages";
 import { AlimConcentres } from "@/components/alim/alim-concentres";
 import { AlimCMV } from "@/components/alim/alim-cmv";
 import { AlimRation } from "@/components/alim/alim-ration";
+import { AlimAIRation } from "@/components/alim/alim-ai-ration";
 import { AlimVerificateur } from "@/components/alim/alim-verificateur";
 import { AlimOptimisation } from "@/components/alim/alim-optimisation";
 import { AlimComparer } from "@/components/alim/alim-comparer";
@@ -30,6 +31,7 @@ type AlimView =
   | "cmv"
   | "ration"
   | "verificateur"
+  | "ai-ration"
   | "optimisation"
   | "comparer"
   | "custom-feeds"
@@ -44,6 +46,7 @@ type AlimView =
 const NAV_ITEMS: { id: AlimView; label: string; description: string; icon: ReactNode }[] = [
   { id: "dashboard", label: "Tableau de bord", description: "Vue d'ensemble", icon: <LayoutDashboard className="h-5 w-5" /> },
   { id: "ration", label: "Ration", description: "Établir une ration", icon: <Calculator className="h-5 w-5" /> },
+  { id: "ai-ration", label: "Assistant IA", description: "Générer une ration par IA", icon: <Sparkles className="h-5 w-5" /> },
   { id: "verificateur", label: "Vérificateur", description: "Analyser une ration inconnue", icon: <ShieldCheck className="h-5 w-5" /> },
   { id: "optimisation", label: "Optimisation", description: "Moindre coût (LP)", icon: <Zap className="h-5 w-5" /> },
   { id: "comparer", label: "Comparer", description: "Comparer 2 rations", icon: <GitCompare className="h-5 w-5" /> },
@@ -180,6 +183,7 @@ export default function Home() {
           <div className="container mx-auto px-4 sm:px-6 py-6 max-w-7xl">
             {view === "dashboard" && <AlimDashboard onNavigate={handleNav} />}
             {view === "ration" && <AlimRation />}
+            {view === "ai-ration" && <AlimAIRation />}
             {view === "verificateur" && <AlimVerificateur />}
             {view === "optimisation" && <AlimOptimisation />}
             {view === "comparer" && <AlimComparer />}
