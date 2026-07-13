@@ -18,6 +18,13 @@ import {
   Calculator, Plus, Trash2, AlertTriangle, CheckCircle2, Info,
   Save, FolderOpen, Euro, Users, Calendar, X, FileText,
 } from "lucide-react";
+import { RationPieChart, NutrientRadarChart } from "./alim-charts";
+
+const PIE_COLORS = [
+  "#10b981", "#f59e0b", "#8b5cf6", "#ec4899", "#06b6d4",
+  "#84cc16", "#f97316", "#6366f1", "#ef4444", "#14b8a6",
+  "#a855f7", "#eab308", "#22c55e", "#3b82f6", "#d946ef",
+];
 
 type FeedItem = {
   id: string;
@@ -1055,6 +1062,48 @@ function RationResults({ ration, animal, lotSize, feedingDays }: { ration: Ratio
           )}
         </CardContent>
       </Card>
+
+      {/* Visualizations (pie chart + radar chart) */}
+      {ration.itemDetails.length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <RationPieChart
+            title="Répartition de la MS (matière sèche)"
+            unit="kg MS"
+            slices={ration.itemDetails
+              .filter((it) => it.msQty > 0.001)
+              .map((it, i) => ({
+                label: it.record.name.length > 30 ? it.record.name.slice(0, 28) + "…" : it.record.name,
+                value: it.msQty,
+                color: PIE_COLORS[i % PIE_COLORS.length],
+              }))}
+          />
+          <RationPieChart
+            title="Répartition du coût"
+            unit="€/jour"
+            slices={ration.itemDetails
+              .filter((it) => it.cost > 0.001)
+              .map((it, i) => ({
+                label: it.record.name.length > 30 ? it.record.name.slice(0, 28) + "…" : it.record.name,
+                value: it.cost,
+                color: PIE_COLORS[i % PIE_COLORS.length],
+              }))}
+          />
+        </div>
+      )}
+
+      {/* Radar chart of nutrient coverage */}
+      {ration.needs.UFL !== null && (
+        <NutrientRadarChart
+          title="Couverture des besoins nutritionnels (%)"
+          axes={[
+            { label: "UFL", value: ration.coverage.UFL ?? 0 },
+            { label: "PDI", value: ration.coverage.PDI ?? 0 },
+            { label: "Pabs", value: ration.coverage.Pabs ?? 0 },
+            { label: "Caabs", value: ration.coverage.Caabs ?? 0 },
+            { label: "UEM", value: ration.coverage.UEM ?? 0 },
+          ]}
+        />
+      )}
 
       {/* Feed contributions with cost */}
       {ration.itemDetails.length > 0 && (
