@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { alimData, num, fmt, type ConcentreRecord } from "@/lib/alim-data";
+import { alimData, num, fmt, allConcentres, type ConcentreRecord } from "@/lib/alim-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,7 +33,7 @@ export function AlimConcentres() {
   const [category, setCategory] = useState<string>("all");
 
   const filtered = useMemo(() => {
-    return alimData.concentres.filter((c) => {
+    return allConcentres.filter((c) => {
       if (search && !c.name.toLowerCase().includes(search.toLowerCase())) return false;
       if (category !== "all" && concentrateCategory(c.name).cat !== category) return false;
       return true;
@@ -42,7 +42,7 @@ export function AlimConcentres() {
 
   const categories = useMemo(() => {
     const set = new Set<string>();
-    alimData.concentres.forEach((c) => set.add(concentrateCategory(c.name).cat));
+    allConcentres.forEach((c) => set.add(concentrateCategory(c.name).cat));
     return Array.from(set).sort();
   }, []);
 
@@ -54,7 +54,7 @@ export function AlimConcentres() {
           Concentrés — Valeurs alimentaires
         </h2>
         <p className="text-sm text-stone-500">
-          {alimData.concentres.length} concentrés référencés (céréales, tourteaux, protéagineux, divers).
+          {allConcentres.length} concentrés référencés (FR + DZ : céréales, tourteaux, protéagineux, divers).
           Valeurs par kg brut.
         </p>
       </div>

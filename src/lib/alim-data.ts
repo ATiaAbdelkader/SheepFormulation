@@ -2,6 +2,7 @@
 // Source: Abdelkader Atia - AgriSkills Academy
 
 import data from "./alim-data.json";
+import algerianFeedsData from "./algerian-feeds.json";
 
 export type AnimalRecord = {
   category: string;
@@ -68,6 +69,34 @@ export type BesoinCategory = {
   consumption_kg_ms_day: number | null;
 };
 
+export type AlgerianFeed = {
+  name: string;
+  kind: "fourrage" | "concentre";
+  category: string;
+  ms_pct: number | null;
+  ufl: number | null;
+  ufv: number | null;
+  pdin: number | null;
+  pdie: number | null;
+  pdia: number | null;
+  protein_pct: number | null;
+  cb_pct: number | null;
+  fat_pct: number | null;
+  ash_pct: number | null;
+  ndf_pct: number | null;
+  adf_pct: number | null;
+  adl_pct: number | null;
+  ca_pct: number | null;
+  p_pct: number | null;
+  caabs: number | null;
+  pabs: number | null;
+  uem: number | null;
+  energy_kcal: number | null;
+  dmd_pct: number | null;
+  price: number | null;
+  source: string;
+};
+
 export type AlimData = {
   animals: AnimalRecord[];
   fourrages: FourrageRecord[];
@@ -82,6 +111,45 @@ export type AlimData = {
 };
 
 export const alimData = data as unknown as AlimData;
+
+// Algerian feed database (59 feeds from ITGC/INRAA tables)
+export const algerianFeeds = algerianFeedsData as unknown as AlgerianFeed[];
+
+// Combined feed list: Algerian feeds compatible with FourrageRecord/ConcentreRecord format
+export const algerianFourrages: FourrageRecord[] = algerianFeeds
+  .filter((f) => f.kind === "fourrage")
+  .map((f) => ({
+    name: `[DZ] ${f.name}`,
+    ms_pct: f.ms_pct,
+    uem: f.uem,
+    ueb: null,
+    ufl: f.ufl,
+    ufv: f.ufv,
+    pdin: f.pdin,
+    pdie: f.pdie,
+    pabs: f.pabs,
+    caabs: f.caabs,
+    price: f.price,
+  }));
+
+export const algerianConcentres: ConcentreRecord[] = algerianFeeds
+  .filter((f) => f.kind === "concentre")
+  .map((f) => ({
+    name: `[DZ] ${f.name}`,
+    ms_pct: f.ms_pct,
+    ufl: f.ufl,
+    pdin: f.pdin,
+    pdie: f.pdie,
+    pabs: f.pabs,
+    caabs: f.caabs,
+    price: f.price,
+  }));
+
+// All available fourrages (French + Algerian)
+export const allFourrages: FourrageRecord[] = [...alimData.fourrages, ...algerianFourrages];
+
+// All available concentres (French + Algerian)
+export const allConcentres: ConcentreRecord[] = [...alimData.concentres, ...algerianConcentres];
 
 // Helper: parse a numeric value that may be "ND" or null
 export function num(v: unknown): number | null {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { alimData, num, fmt, type AnimalRecord, type FourrageRecord, type ConcentreRecord } from "@/lib/alim-data";
+import { alimData, num, fmt, allFourrages, allConcentres, type AnimalRecord, type FourrageRecord, type ConcentreRecord } from "@/lib/alim-data";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -582,7 +582,7 @@ function CoverageBadge({ pct }: { pct: number }) {
 function IngredientPicker({ kind, onPick }: { kind: "fourrage" | "concentre"; onPick: (r: FourrageRecord | ConcentreRecord) => void }) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const data = kind === "fourrage" ? alimData.fourrages : alimData.concentres;
+  const data = kind === "fourrage" ? allFourrages : allConcentres;
   const filtered = data.filter((d) => !search || d.name.toLowerCase().includes(search.toLowerCase()));
 
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { alimData, num, fmt, type FourrageRecord } from "@/lib/alim-data";
+import { alimData, num, fmt, allFourrages, type FourrageRecord } from "@/lib/alim-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,7 +28,7 @@ export function AlimFourrages() {
   const [onlyAvailable, setOnlyAvailable] = useState(false);
 
   const filtered = useMemo(() => {
-    return alimData.fourrages.filter((f) => {
+    return allFourrages.filter((f) => {
       if (search && !f.name.toLowerCase().includes(search.toLowerCase())) return false;
       if (category !== "all") {
         const c = forageCategory(f.name);
@@ -41,7 +41,7 @@ export function AlimFourrages() {
 
   const categories = useMemo(() => {
     const set = new Set<string>();
-    alimData.fourrages.forEach((f) => set.add(forageCategory(f.name).cat));
+    allFourrages.forEach((f) => set.add(forageCategory(f.name).cat));
     return Array.from(set).sort();
   }, []);
 
@@ -53,7 +53,7 @@ export function AlimFourrages() {
           Fourrages — Valeurs alimentaires
         </h2>
         <p className="text-sm text-stone-500">
-          {alimData.fourrages.length} fourrages référencés. Valeurs par kg de matière sèche (MS).
+          {allFourrages.length} fourrages référencés (FR + DZ). Valeurs par kg de matière sèche (MS).
           La teneur en MS (%) permet de convertir les quantités brutes en quantités MS.
         </p>
       </div>
