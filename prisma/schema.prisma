@@ -28,7 +28,7 @@ model Post {
   updatedAt DateTime @updatedAt
 }
 
-// ---------- Classroom Mode ----------
+// ---------- Classroom Mode (Academy LMS) ----------
 
 model Assignment {
   id          String   @id @default(cuid())
@@ -52,8 +52,14 @@ model Assignment {
   createdAt        DateTime @default(now())
   dueDate          DateTime?
   isActive         Boolean  @default(true)
+  // LMS fields
+  difficulty       String  @default("normal") // easy, normal, hard, expert
+  topic            String  @default("general") // gestation, lactation, croissance, engrais, general
+  templateId       String? // if created from a template
 
   submissions Submission[]
+
+  @@index([createdBy])
 }
 
 model Submission {
@@ -85,4 +91,65 @@ model Submission {
   assignment  Assignment @relation(fields: [assignmentId], references: [id])
 
   @@index([assignmentId])
+  @@index([studentName])
+}
+
+// ---------- Academy LMS Extensions ----------
+
+model Student {
+  id          String   @id @default(cuid())
+  name        String
+  email       String?
+  // Aggregated stats
+  totalSubmissions Int   @default(0)
+  averageScore     Float @default(0)
+  bestScore        Float @default(0)
+  certificatesEarned Int @default(0)
+  // Skill mastery (0-100 per skill)
+  skillEnergy       Float @default(0) // UFL coverage
+  skillProtein      Float @default(0) // PDI coverage
+  skillMinerals     Float @default(0) // Pabs/Caabs coverage
+  skillCost         Float @default(0) // cost optimization
+  skillFeasibility  Float @default(0) // UEM feasibility
+  // Timestamps
+  firstSubmission DateTime?
+  lastSubmission  DateTime?
+  createdAt       DateTime @default(now())
+
+  @@index([name])
+}
+
+model Template {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  category    String   // gestation, lactation, croissance, engrais, general
+  difficulty  String   @default("normal") // easy, normal, hard, expert
+  animalCategory String
+  maxCostPerDay    Float?
+  minPDICoverage   Float   @default(95)
+  minUFLCoverage   Float   @default(95)
+  minPabsCoverage  Float?
+  minCaabsCoverage Float?
+  maxConcentratePct Float?
+  weightCost       Float   @default(40)
+  weightCoverage   Float   @default(40)
+  weightFeasibility Float  @default(20)
+  estimatedTime    Int     @default(20) // minutes
+  learningObjectives String // JSON array of objectives
+  isOfficial      Boolean  @default(true)
+  createdAt       DateTime @default(now())
+}
+
+model Certificate {
+  id          String   @id @default(cuid())
+  studentName String
+  assignmentId String?
+  assignmentTitle String
+  score       Float
+  grade       String
+  issuedAt    DateTime @default(now())
+  certificateNumber String @unique
+
+  @@index([studentName])
 }

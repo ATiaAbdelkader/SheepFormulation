@@ -142,7 +142,79 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({ submission, score, grade, feedback });
+    // Update or create Student record with skill mastery
+    const existingStudent = await db.student.findFirst({ where: { name: studentName } });
+    const allSubmissions = await db.submission.findMany({ where: { studentName } });
+    const totalSubs = allSubmissions.length;
+    const avgScore = allSubmissions.reduce((s, sub) => s + (sub.score || 0), 0) / totalSubs;
+    const bestScore = Math.max(...allSubmissions.map((s) => s.score || 0));
+
+    // Skill mastery: average coverage per dimension
+    const skillEnergy = allSubmissions.reduce((s, sub) => s + sub.coverageUFL, 0) / totalSubs;
+    const skillProtein = allSubmissions.reduce((s, sub) => s + sub.coveragePDI, 0) / totalSubs;
+    const skillMinerals = allSubmissions.reduce((s, sub) => s + (sub.coveragePabs + sub.coverageCaabs) / 2, 0) / totalSubs;
+    // Cost skill: higher score = better cost management (inverted: lower cost relative to max = higher skill)
+    const maxCosts = allSubmissions.map((s) => s.totalCost);
+    const minCost = Math.min(...maxCosts);
+    const maxCost = Math.max(...maxCosts);
+    const skillCost = maxCost > minCost ? 100 - ((metrics.totalCost - minCost) / (maxCost - minCost)) * 100 : 100;
+    const skillFeasibility = allSubmissions.filter((s) => s.feasibleUM).length / totalSubs * 100;
+
+    // Certificate for A grade (score >= 90)
+    let certificate: { certificateNumber: string } | null = null;
+    if (score >= 90) {
+      const certNumber = `OVI-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+      certificate = await db.certificate.create({
+        data: {
+          studentName,
+          assignmentId: assignment.id,
+          assignmentTitle: assignment.title,
+          score,
+          grade,
+          certificateNumber: certNumber,
+        },
+      });
+      certificate = { certificateNumber: certNumber };
+    }
+
+    if (existingStudent) {
+      await db.student.update({
+        where: { id: existingStudent.id },
+        data: {
+          email: studentEmail || existingStudent.email,
+          totalSubmissions: totalSubs,
+          averageScore: avgScore,
+          bestScore,
+          certificatesEarned: score >= 90 ? existingStudent.certificatesEarned + 1 : existingStudent.certificatesEarned,
+          skillEnergy,
+          skillProtein,
+          skillMinerals,
+          skillCost,
+          skillFeasibility,
+          lastSubmission: new Date(),
+        },
+      });
+    } else {
+      await db.student.create({
+        data: {
+          name: studentName,
+          email: studentEmail || null,
+          totalSubmissions: totalSubs,
+          averageScore: avgScore,
+          bestScore,
+          certificatesEarned: score >= 90 ? 1 : 0,
+          skillEnergy,
+          skillProtein,
+          skillMinerals,
+          skillCost,
+          skillFeasibility,
+          firstSubmission: new Date(),
+          lastSubmission: new Date(),
+        },
+      });
+    }
+
+    return NextResponse.json({ submission, score, grade, feedback, certificate });
   } catch (error: any) {
     console.error("[Submit API] Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
