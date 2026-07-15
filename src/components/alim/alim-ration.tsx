@@ -16,7 +16,7 @@ import {
 } from "@/lib/ration-storage";
 import {
   Calculator, Plus, Trash2, AlertTriangle, CheckCircle2, Info,
-  Save, FolderOpen, Euro, Users, Calendar, X, FileText,
+  Save, FolderOpen, Euro, Users, Calendar, X, FileText, Printer, Copy,
 } from "lucide-react";
 import { RationPieChart, NutrientRadarChart } from "./alim-charts";
 import { HealthRiskPanel, type RationContext } from "./alim-health-risks";
@@ -350,6 +350,18 @@ export function AlimRation() {
     setShowLoadDialog(false);
   };
 
+  const handleClone = (r: SavedRation) => {
+    // Clone the ration with a new name
+    handleLoad(r);
+    setRationName(`${r.name} (copie)`);
+    setShowSaveDialog(true);
+    setShowLoadDialog(false);
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
   const handleDelete = (id: string) => {
     deleteRation(id);
     setSavedRations(listRations());
@@ -369,8 +381,8 @@ export function AlimRation() {
               L&apos;outil calcule les apports (UFL, PDI, Pabs, Caabs), le coût et les compare aux besoins.
             </p>
           </div>
-          {/* Save/Load buttons */}
-          <div className="flex items-center gap-2">
+          {/* Save/Load/Print buttons */}
+          <div className="flex items-center gap-2 no-print">
             <Button size="sm" variant="outline" onClick={() => setShowSaveDialog(true)} disabled={!selectedAnimal}>
               <Save className="h-4 w-4 mr-1" /> Enregistrer
             </Button>
@@ -379,6 +391,9 @@ export function AlimRation() {
               {savedRations.length > 0 && (
                 <Badge variant="secondary" className="ml-1 text-[10px]">{savedRations.length}</Badge>
               )}
+            </Button>
+            <Button size="sm" variant="outline" onClick={handlePrint} disabled={!selectedAnimal || ration === null}>
+              <Printer className="h-4 w-4 mr-1" /> Imprimer
             </Button>
           </div>
         </div>
@@ -632,14 +647,25 @@ export function AlimRation() {
                             {r.feedItems.length} aliment(s) · {new Date(r.savedAt).toLocaleDateString("fr-FR")}
                           </div>
                         </button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 text-stone-400 hover:text-rose-600"
-                          onClick={() => handleDelete(r.id)}
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
+                        <div className="flex gap-1 flex-shrink-0">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 text-stone-400 hover:text-emerald-600"
+                            onClick={() => handleClone(r)}
+                            title="Cloner et modifier"
+                          >
+                            <Copy className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 text-stone-400 hover:text-rose-600"
+                            onClick={() => handleDelete(r.id)}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   ))}

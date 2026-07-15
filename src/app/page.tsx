@@ -9,7 +9,7 @@ import { AlimAnimals } from "@/components/alim/alim-animals";
 import { AlimFourrages } from "@/components/alim/alim-fourrages";
 import { AlimConcentres } from "@/components/alim/alim-concentres";
 import { AlimCMV } from "@/components/alim/alim-cmv";
-import { AlimRation } from "@/components/alim/alim-ration";
+import { AlimRationPro } from "@/components/alim/alim-ration-pro";
 import { AlimAIRation } from "@/components/alim/alim-ai-ration";
 import { AlimVerificateur } from "@/components/alim/alim-verificateur";
 import { AlimOptimisation } from "@/components/alim/alim-optimisation";
@@ -188,7 +188,7 @@ export default function Home() {
         <main className="flex-1 min-w-0">
           <div className="container mx-auto px-4 sm:px-6 py-6 max-w-7xl">
             {view === "dashboard" && <AlimDashboard onNavigate={handleNav} />}
-            {view === "ration" && <AlimRation />}
+            {view === "ration" && <AlimRationPro />}
             {view === "ai-ration" && <AlimAIRation />}
             {view === "verificateur" && <AlimVerificateur />}
             {view === "optimisation" && <AlimOptimisation />}
