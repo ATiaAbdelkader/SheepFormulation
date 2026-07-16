@@ -4,11 +4,15 @@ import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Atom, Play, Pause, RotateCcw, Info, Droplet, Bug, Zap, Wind,
   Thermometer, Gauge, Activity, Brain, Award, CheckCircle2, XCircle,
-  Sunrise, Sun, Sunset, Moon, FlaskConical, AlertCircle,
+  Sunrise, Sun, Sunset, Moon, FlaskConical, AlertCircle, Beaker, GitCompare,
+  ArrowRight, Plus,
 } from "lucide-react";
+import { MICROBE_ENCYCLOPEDIA, simulateBuffer } from "@/lib/microbe-encyclopedia";
 
 // ==================== TYPES ====================
 
@@ -265,6 +269,7 @@ function simulateRumen(feeds: SimFeed[], hour: number, feedingEvents: FeedingEve
 // ==================== COMPONENT ====================
 
 export function AlimRumenSim() {
+  const [labTab, setLabTab] = useState<"lab" | "microbes" | "buffer" | "compare">("lab");
   const [selectedFeedIds, setSelectedFeedIds] = useState<string[]>(["foin-prairie", "ensilage-mais", "orge"]);
   const [hour, setHour] = useState(8); // 0-24
   const [playing, setPlaying] = useState(true);
@@ -357,14 +362,45 @@ export function AlimRumenSim() {
       <div className="flex flex-col gap-1">
         <h2 className="text-xl font-bold text-stone-900 flex items-center gap-2">
           <Atom className="h-5 w-5 text-cyan-700" />
-          Simulateur de rumen avancé
+          Rumen Lab — Laboratoire de fermentation
         </h2>
         <p className="text-sm text-stone-500">
-          Visualisez en temps réel la fermentation ruminale : pH, 6 populations microbiennes, AGV, gaz, ammonia.
-          20+ aliments, scénarios préprogrammés, courbes 24h, et mode quiz.
+          Simulation avancée: pH, 6 populations microbiennes, AGV, gaz, ammonia, tamponnement, encyclopédie microbienne.
         </p>
       </div>
 
+      {/* Lab tabs */}
+      <div className="flex flex-wrap gap-1 border-b border-stone-200 pb-1">
+        <button onClick={() => setLabTab("lab")}
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-t-md text-xs font-medium transition-colors ${labTab === "lab" ? "bg-cyan-100 text-cyan-900 border-b-2 border-cyan-600" : "text-stone-600 hover:bg-stone-100"}`}>
+          <Atom className="h-3.5 w-3.5" /> Laboratoire
+        </button>
+        <button onClick={() => setLabTab("microbes")}
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-t-md text-xs font-medium transition-colors ${labTab === "microbes" ? "bg-cyan-100 text-cyan-900 border-b-2 border-cyan-600" : "text-stone-600 hover:bg-stone-100"}`}>
+          <Bug className="h-3.5 w-3.5" /> Encyclopédie microbienne
+        </button>
+        <button onClick={() => setLabTab("buffer")}
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-t-md text-xs font-medium transition-colors ${labTab === "buffer" ? "bg-cyan-100 text-cyan-900 border-b-2 border-cyan-600" : "text-stone-600 hover:bg-stone-100"}`}>
+          <Beaker className="h-3.5 w-3.5" /> Tampon pH
+        </button>
+        <button onClick={() => setLabTab("compare")}
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-t-md text-xs font-medium transition-colors ${labTab === "compare" ? "bg-cyan-100 text-cyan-900 border-b-2 border-cyan-600" : "text-stone-600 hover:bg-stone-100"}`}>
+          <GitCompare className="h-3.5 w-3.5" /> Comparaison
+        </button>
+      </div>
+
+      {/* Microbe Encyclopedia Tab */}
+      {labTab === "microbes" && <MicrobeEncyclopediaTab currentRumenState={state} />}
+
+      {/* Buffer Tab */}
+      {labTab === "buffer" && <BufferTab currentPH={state.pH} />}
+
+      {/* Compare Tab */}
+      {labTab === "compare" && <CompareTab currentFeeds={selectedFeeds} currentHour={hour} currentFeedingEvents={feedingEvents} />}
+
+      {/* Lab Tab (original simulator) */}
+      {labTab === "lab" && (
+        <>
       {/* Scenario presets */}
       <Card className="border-stone-200">
         <CardHeader className="pb-2">
@@ -626,11 +662,476 @@ export function AlimRumenSim() {
           </div>
         </CardContent>
       </Card>
+      </>
+      )}
     </div>
   );
 }
 
-// ==================== RUMEN VISUALIZATION (SVG) ====================
+// ==================== MICROBE ENCYCLOPEDIA TAB ====================
+function MicrobeEncyclopediaTab({ currentRumenState }: { currentRumenState: RumenState }) {
+  const [selected, setSelected] = useState<string>("cellulolytic");
+
+  const microbe = MICROBE_ENCYCLOPEDIA.find((m) => m.id === selected);
+  // Map current rumen state to microbe population values
+  const populationMap: Record<string, number> = {
+    cellulolytic: currentRumenState.cellulolytic,
+    amylolytic: currentRumenState.amylolytic,
+    proteolytic: currentRumenState.proteolytic,
+    protozoa: currentRumenState.protozoa,
+    fungi: currentRumenState.fungi,
+    methanogens: currentRumenState.methanogens,
+  };
+
+  return (
+    <div className="space-y-4">
+      <Card className="border-cyan-200 bg-cyan-50/30">
+        <CardContent className="p-3">
+          <div className="flex items-start gap-2">
+            <Bug className="h-4 w-4 text-cyan-700 mt-0.5 flex-shrink-0" />
+            <div className="text-xs text-stone-700">
+              <strong className="text-cyan-900">Encyclopédie microbienne</strong> — Cliquez sur un microbe pour voir son rôle, ses substrats, ses conditions optimales et son état actuel dans votre rumen.
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Microbe selector grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+        {MICROBE_ENCYCLOPEDIA.map((m) => {
+          const pop = populationMap[m.id] || 0;
+          return (
+            <button key={m.id} onClick={() => setSelected(m.id)}
+              className={`p-2.5 rounded-lg border-2 text-center transition-all ${
+                selected === m.id ? "border-cyan-500 bg-cyan-50 shadow-sm" : "border-stone-200 bg-white hover:border-stone-300"
+              }`}>
+              <div className="text-2xl mb-1">{m.icon}</div>
+              <div className="text-[10px] font-medium text-stone-900">{m.name}</div>
+              <div className="mt-1.5 h-1 bg-stone-100 rounded-full overflow-hidden">
+                <div className="h-full rounded-full" style={{ width: `${pop}%`, backgroundColor: m.color }} />
+              </div>
+              <div className="text-[9px] text-stone-500 mt-0.5">{pop.toFixed(0)}/100</div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Detail card */}
+      {microbe && (
+        <Card className="border-2" style={{ borderColor: microbe.color }}>
+          <CardHeader className="pb-3">
+            <div className="flex items-start justify-between">
+              <div>
+                <CardTitle className="text-base font-bold flex items-center gap-2">
+                  <span className="text-2xl">{microbe.icon}</span>
+                  {microbe.name}
+                </CardTitle>
+                <CardDescription className="text-xs italic mt-1">{microbe.scientificName}</CardDescription>
+              </div>
+              <Badge className="text-[10px]" style={{ backgroundColor: microbe.color + "30", color: microbe.color }}>
+                {microbe.type === "bacteria" ? "Bactérie" : microbe.type === "protozoa" ? "Protozoaire" : microbe.type === "fungi" ? "Champignon" : "Archée"}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Current population */}
+            <div className="rounded-lg bg-stone-50 p-3">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs font-medium text-stone-700">Population actuelle dans votre rumen</span>
+                <span className="text-lg font-bold" style={{ color: microbe.color }}>{populationMap[microbe.id]?.toFixed(0)}/100</span>
+              </div>
+              <div className="h-2 bg-stone-200 rounded-full overflow-hidden">
+                <div className="h-full rounded-full transition-all" style={{ width: `${populationMap[microbe.id] || 0}%`, backgroundColor: microbe.color }} />
+              </div>
+            </div>
+
+            {/* Description */}
+            <div>
+              <span className="text-[10px] font-medium text-stone-500 uppercase">Description</span>
+              <p className="text-xs text-stone-700 mt-0.5 leading-relaxed">{microbe.descriptionFr}</p>
+            </div>
+
+            {/* Role */}
+            <div>
+              <span className="text-[10px] font-medium text-stone-500 uppercase">Rôle dans le rumen</span>
+              <p className="text-xs text-stone-700 mt-0.5">{microbe.roleFr}</p>
+            </div>
+
+            {/* Substrates & Products */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-lg bg-emerald-50 p-2 border border-emerald-200">
+                <span className="text-[10px] font-medium text-emerald-700 uppercase">Substrats (digère)</span>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {microbe.substrates.map((s, i) => (
+                    <Badge key={i} variant="outline" className="text-[9px] bg-white">{s}</Badge>
+                  ))}
+                </div>
+              </div>
+              <div className="rounded-lg bg-amber-50 p-2 border border-amber-200">
+                <span className="text-[10px] font-medium text-amber-700 uppercase">Produits (génère)</span>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {microbe.products.map((p, i) => (
+                    <Badge key={i} variant="outline" className="text-[9px] bg-white">{p}</Badge>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Optimal conditions */}
+            <div className="grid grid-cols-3 gap-2">
+              <div className="rounded bg-stone-50 p-2 text-center">
+                <div className="text-[9px] text-stone-500 uppercase">pH optimal</div>
+                <div className="text-sm font-bold text-stone-900">{microbe.optimalPH.min}-{microbe.optimalPH.max}</div>
+                <div className="text-[8px] text-stone-400">idéal: {microbe.optimalPH.optimal}</div>
+              </div>
+              <div className="rounded bg-stone-50 p-2 text-center">
+                <div className="text-[9px] text-stone-500 uppercase">Température</div>
+                <div className="text-sm font-bold text-stone-900">{microbe.optimalTemp.min}-{microbe.optimalTemp.max}°C</div>
+              </div>
+              <div className="rounded bg-stone-50 p-2 text-center">
+                <div className="text-[9px] text-stone-500 uppercase">Temps de doublement</div>
+                <div className="text-sm font-bold text-stone-900">{microbe.doublingTime}</div>
+              </div>
+            </div>
+
+            {/* pH drop effect */}
+            <div className="rounded-lg bg-rose-50 p-2 border border-rose-200">
+              <span className="text-[10px] font-medium text-rose-700 uppercase">Effet d'une baisse de pH</span>
+              <p className="text-xs text-rose-800 mt-0.5">{microbe.phDropEffect}</p>
+            </div>
+
+            {/* Key species */}
+            <div>
+              <span className="text-[10px] font-medium text-stone-500 uppercase">Espèces clés</span>
+              <div className="flex flex-wrap gap-1 mt-1">
+                {microbe.keySpecies.map((s, i) => (
+                  <Badge key={i} variant="outline" className="text-[10px] italic bg-stone-50">{s}</Badge>
+                ))}
+              </div>
+            </div>
+
+            {/* Biomass fraction */}
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-stone-500">Fraction de la biomasse microbienne:</span>
+              <span className="font-medium text-stone-900">{microbe.biomassFraction}</span>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}
+
+// ==================== BUFFER TAB ====================
+function BufferTab({ currentPH }: { currentPH: number }) {
+  const [animalWeight, setAnimalWeight] = useState(70);
+  const [bicarbonateGrams, setBicarbonateGrams] = useState(15);
+
+  const result = useMemo(() => simulateBuffer(currentPH, animalWeight, bicarbonateGrams), [currentPH, animalWeight, bicarbonateGrams]);
+
+  return (
+    <div className="space-y-4">
+      <Card className="border-cyan-200 bg-cyan-50/30">
+        <CardContent className="p-3">
+          <div className="flex items-start gap-2">
+            <Beaker className="h-4 w-4 text-cyan-700 mt-0.5 flex-shrink-0" />
+            <div className="text-xs text-stone-700">
+              <strong className="text-cyan-900">Simulateur de tampon pH</strong> — Ajoutez du bicarbonate de sodium (NaHCO₃) et voyez l&apos;effet sur le pH ruminal.
+              Le pH actuel est celui du rumen dans l&apos;onglet Laboratoire.
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Input */}
+        <Card className="border-stone-200">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-semibold">Paramètres du tampon</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs">pH ruminal actuel</Label>
+              <div className="flex items-center gap-2">
+                <div className={`flex-1 h-10 rounded-lg flex items-center justify-center text-2xl font-bold ${
+                  currentPH >= 6.4 ? "bg-emerald-100 text-emerald-700" : currentPH >= 6.0 ? "bg-amber-100 text-amber-700" : "bg-rose-100 text-rose-700"
+                }`}>
+                  {currentPH.toFixed(2)}
+                </div>
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Poids de l&apos;animal (kg)</Label>
+              <Input type="number" min="20" max="150" value={animalWeight} onChange={(e) => setAnimalWeight(Number(e.target.value) || 70)} className="h-9" />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Bicarbonate de sodium (g/jour)</Label>
+              <Input type="number" min="0" max="100" step="5" value={bicarbonateGrams} onChange={(e) => setBicarbonateGrams(Number(e.target.value) || 0)} className="h-9" />
+              <input type="range" min="0" max="100" step="5" value={bicarbonateGrams} onChange={(e) => setBicarbonateGrams(Number(e.target.value))} className="w-full h-1.5 accent-cyan-600 mt-1" />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Results */}
+        <Card className="border-cyan-300 bg-gradient-to-br from-cyan-50/40 to-white">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-semibold flex items-center gap-2">
+              <Beaker className="h-4 w-4 text-cyan-700" /> Effet du tampon
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {/* pH before/after */}
+            <div className="flex items-center justify-between rounded-lg bg-white p-3 border border-stone-200">
+              <div className="text-center">
+                <div className="text-[10px] text-stone-500 uppercase">pH avant</div>
+                <div className={`text-2xl font-bold ${result.phBefore >= 6.4 ? "text-emerald-700" : result.phBefore >= 6.0 ? "text-amber-700" : "text-rose-700"}`}>
+                  {result.phBefore.toFixed(2)}
+                </div>
+              </div>
+              <ArrowRight className="h-6 w-6 text-stone-400" />
+              <div className="text-center">
+                <div className="text-[10px] text-stone-500 uppercase">pH après</div>
+                <div className={`text-2xl font-bold ${result.phAfter >= 6.4 ? "text-emerald-700" : result.phAfter >= 6.0 ? "text-amber-700" : "text-rose-700"}`}>
+                  {result.phAfter.toFixed(2)}
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-[10px] text-stone-500 uppercase">Δ pH</div>
+                <div className="text-2xl font-bold text-cyan-700">+{result.phChange.toFixed(2)}</div>
+              </div>
+            </div>
+
+            {/* Metrics */}
+            <div className="grid grid-cols-2 gap-2">
+              <div className="rounded bg-white p-2 text-center border border-stone-200">
+                <div className="text-[9px] text-stone-500 uppercase">Capacité tampon</div>
+                <div className="text-sm font-bold text-stone-900">{result.bufferingCapacity.toFixed(0)} mEq/L</div>
+              </div>
+              <div className="rounded bg-white p-2 text-center border border-stone-200">
+                <div className="text-[9px] text-stone-500 uppercase">Salive (L/j)</div>
+                <div className="text-sm font-bold text-stone-900">{result.salivaContribution.toFixed(1)}</div>
+              </div>
+              <div className="rounded bg-white p-2 text-center border border-stone-200">
+                <div className="text-[9px] text-stone-500 uppercase">Coût / jour</div>
+                <div className="text-sm font-bold text-amber-700">{result.costPerDay.toFixed(3)} €</div>
+              </div>
+              <div className="rounded bg-white p-2 text-center border border-stone-200">
+                <div className="text-[9px] text-stone-500 uppercase">Dose / 50kg</div>
+                <div className="text-sm font-bold text-stone-900">{(bicarbonateGrams / (animalWeight / 50)).toFixed(1)} g</div>
+              </div>
+            </div>
+
+            {/* Recommendation */}
+            <div className={`rounded-lg p-3 border ${
+              result.phAfter >= 6.4 ? "bg-emerald-50 border-emerald-200" : result.phAfter >= 6.0 ? "bg-amber-50 border-amber-200" : "bg-rose-50 border-rose-200"
+            }`}>
+              <p className="text-xs text-stone-700">{result.recommendation}</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* pH gauge visualization */}
+      <Card className="border-stone-200">
+        <CardHeader className="pb-2"><CardTitle className="text-xs font-semibold">Échelle de pH ruminal</CardTitle></CardHeader>
+        <CardContent>
+          <div className="relative h-12 rounded-lg overflow-hidden flex">
+            {/* pH scale: 5.0 to 7.2 */}
+            <div className="bg-red-500 flex items-center justify-center text-[10px] text-white" style={{ width: `${((5.5 - 5.0) / (7.2 - 5.0)) * 100}%` }}>5.0-5.5</div>
+            <div className="bg-orange-500 flex items-center justify-center text-[10px] text-white" style={{ width: `${((6.0 - 5.5) / (7.2 - 5.0)) * 100}%` }}>5.5-6.0</div>
+            <div className="bg-amber-400 flex items-center justify-center text-[10px] text-white" style={{ width: `${((6.4 - 6.0) / (7.2 - 5.0)) * 100}%` }}>6.0-6.4</div>
+            <div className="bg-emerald-500 flex items-center justify-center text-[10px] text-white" style={{ width: `${((7.2 - 6.4) / (7.2 - 5.0)) * 100}%` }}>6.4-7.2</div>
+            {/* Before marker */}
+            <div className="absolute top-0 h-3 w-0.5 bg-stone-800" style={{ left: `${((result.phBefore - 5.0) / (7.2 - 5.0)) * 100}%` }} />
+            <div className="absolute top-3 text-[8px] font-medium text-stone-800" style={{ left: `${((result.phBefore - 5.0) / (7.2 - 5.0)) * 100}%`, transform: "translateX(-50%)" }}>Avant</div>
+            {/* After marker */}
+            <div className="absolute bottom-0 h-3 w-0.5 bg-cyan-600" style={{ left: `${((result.phAfter - 5.0) / (7.2 - 5.0)) * 100}%` }} />
+            <div className="absolute bottom-3 text-[8px] font-medium text-cyan-700" style={{ left: `${((result.phAfter - 5.0) / (7.2 - 5.0)) * 100}%`, transform: "translateX(-50%)" }}>Après</div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="border-cyan-200 bg-cyan-50/30">
+        <CardContent className="p-3">
+          <div className="flex items-start gap-2">
+            <Info className="h-4 w-4 text-cyan-700 mt-0.5 flex-shrink-0" />
+            <div className="text-xs text-stone-700 space-y-1">
+              <p><strong>Comment ça marche:</strong> Le NaHCO₃ (bicarbonate de sodium) augmente le pH ruminal en neutralisant les acides produits par la fermentation. La salive est le tampon naturel (riche en bicarbonate).</p>
+              <p><strong>Dose recommandée:</strong> 10-20g par brebis et par jour en prévention, 30-50g en cas d&apos;acidose subaiguë. Au-delà de 50g, l&apos;effet plafonne et le coût n&apos;est plus justifié.</p>
+              <p><strong>Alternative:</strong> Augmenter la part de fourrage dans la ration stimule la mastication et donc la production de salive (tampon naturel gratuit).</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// ==================== COMPARE TAB ====================
+function CompareTab({ currentFeeds, currentHour, currentFeedingEvents }: {
+  currentFeeds: SimFeed[];
+  currentHour: number;
+  currentFeedingEvents: FeedingEvent[];
+}) {
+  const [scenarioFeeds, setScenarioFeeds] = useState<string[]>(["ble", "mais-grain", "ble"]);
+  const scenarioFeedObjs = scenarioFeeds.map((id) => FEED_LIBRARY.find((f) => f.id === id)!).filter(Boolean);
+
+  const stateA = useMemo(() => simulateRumen(currentFeeds, currentHour, currentFeedingEvents), [currentFeeds, currentHour, currentFeedingEvents]);
+  const stateB = useMemo(() => simulateRumen(scenarioFeedObjs, currentHour, currentFeedingEvents), [scenarioFeedObjs, currentHour, currentFeedingEvents]);
+
+  const addScenarioFeed = (feed: SimFeed) => setScenarioFeeds([...scenarioFeeds, feed.id]);
+  const removeScenarioFeed = (idx: number) => setScenarioFeeds(scenarioFeeds.filter((_, i) => i !== idx));
+
+  const metrics: Array<{ label: string; a: number; b: number; unit: string; better: "high" | "low" | null }> = [
+    { label: "pH", a: stateA.pH, b: stateB.pH, unit: "", better: "high" },
+    { label: "AGV totaux", a: stateA.vfaTotal, b: stateB.vfaTotal, unit: "mmol/L", better: null },
+    { label: "Acide lactique", a: stateA.lacticAcid, b: stateB.lacticAcid, unit: "mmol/L", better: "low" },
+    { label: "Ammoniac", a: stateA.ammonia, b: stateB.ammonia, unit: "mg/dL", better: null },
+    { label: "Méthane", a: stateA.methane, b: stateB.methane, unit: "L/j", better: "low" },
+    { label: "CO₂", a: stateA.co2, b: stateB.co2, unit: "L/j", better: "low" },
+    { label: "Cellulolytiques", a: stateA.cellulolytic, b: stateB.cellulolytic, unit: "/100", better: "high" },
+    { label: "Amylolytiques", a: stateA.amylolytic, b: stateB.amylolytic, unit: "/100", better: null },
+    { label: "Protozoaires", a: stateA.protozoa, b: stateB.protozoa, unit: "/100", better: "high" },
+    { label: "Champignons", a: stateA.fungi, b: stateB.fungi, unit: "/100", better: "high" },
+  ];
+
+  return (
+    <div className="space-y-4">
+      <Card className="border-cyan-200 bg-cyan-50/30">
+        <CardContent className="p-3">
+          <div className="flex items-start gap-2">
+            <GitCompare className="h-4 w-4 text-cyan-700 mt-0.5 flex-shrink-0" />
+            <div className="text-xs text-stone-700">
+              <strong className="text-cyan-900">Comparaison côte à côte</strong> — Comparez deux scénarios d&apos;alimentation
+              et voyez l&apos;impact sur le pH, les microbes et les gaz.
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Scenario A (current) */}
+        <Card className="border-indigo-200">
+          <CardHeader className="pb-2"><CardTitle className="text-xs font-semibold text-indigo-800">Scénario A (Laboratoire)</CardTitle></CardHeader>
+          <CardContent>
+            <div className="space-y-1">
+              {currentFeeds.map((f, i) => (
+                <div key={i} className="flex items-center gap-2 text-xs">
+                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: f.color }} />
+                  <span className="flex-1 text-stone-700">{f.name}</span>
+                  <span className="text-stone-400">{f.msKg}kg</span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-2 pt-2 border-t border-stone-100 grid grid-cols-2 gap-1 text-xs">
+              <div>pH: <span className={`font-bold ${stateA.pH >= 6.4 ? "text-emerald-700" : stateA.pH >= 6.0 ? "text-amber-700" : "text-rose-700"}`}>{stateA.pH.toFixed(2)}</span></div>
+              <div>CH₄: <span className="font-bold">{stateA.methane.toFixed(1)} L</span></div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Scenario B (custom) */}
+        <Card className="border-purple-200">
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-xs font-semibold text-purple-800">Scénario B (comparaison)</CardTitle>
+              <CompareFeedPicker onPick={(f) => addScenarioFeed(f)} />
+            </div>
+          </CardHeader>
+          <CardContent>
+            {scenarioFeedObjs.length === 0 ? (
+              <div className="text-xs text-stone-400 text-center py-2">Ajoutez des aliments</div>
+            ) : (
+              <div className="space-y-1">
+                {scenarioFeedObjs.map((f, i) => (
+                  <div key={i} className="flex items-center gap-2 text-xs">
+                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: f.color }} />
+                    <span className="flex-1 text-stone-700">{f.name}</span>
+                    <span className="text-stone-400">{f.msKg}kg</span>
+                    <button onClick={() => removeScenarioFeed(i)} className="text-stone-400 hover:text-rose-600 text-[10px]">✗</button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="mt-2 pt-2 border-t border-stone-100 grid grid-cols-2 gap-1 text-xs">
+              <div>pH: <span className={`font-bold ${stateB.pH >= 6.4 ? "text-emerald-700" : stateB.pH >= 6.0 ? "text-amber-700" : "text-rose-700"}`}>{stateB.pH.toFixed(2)}</span></div>
+              <div>CH₄: <span className="font-bold">{stateB.methane.toFixed(1)} L</span></div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Comparison table */}
+      <Card className="border-stone-200">
+        <CardHeader className="pb-2"><CardTitle className="text-xs font-semibold">Comparaison des paramètres</CardTitle></CardHeader>
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead className="bg-stone-100 text-stone-600 border-b border-stone-200">
+                <tr>
+                  <th className="text-left px-3 py-2 font-medium">Paramètre</th>
+                  <th className="text-right px-3 py-2 font-medium">Scénario A</th>
+                  <th className="text-right px-3 py-2 font-medium">Scénario B</th>
+                  <th className="text-right px-3 py-2 font-medium">Δ</th>
+                  <th className="text-center px-3 py-2 font-medium">Meilleur</th>
+                </tr>
+              </thead>
+              <tbody>
+                {metrics.map((m, i) => {
+                  const diff = m.b - m.a;
+                  let better: "A" | "B" | "—" = "—";
+                  if (m.better === "high") better = m.a > m.b ? "A" : m.b > m.a ? "B" : "—";
+                  else if (m.better === "low") better = m.a < m.b ? "A" : m.b < m.a ? "B" : "—";
+                  return (
+                    <tr key={i} className="border-b border-stone-100">
+                      <td className="px-3 py-1.5 text-stone-700">{m.label}</td>
+                      <td className={`px-3 py-1.5 text-right tabular-nums ${better === "A" ? "text-emerald-700 font-bold" : ""}`}>{m.a.toFixed(m.unit === "" ? 2 : 1)} <span className="text-[9px] text-stone-400">{m.unit}</span></td>
+                      <td className={`px-3 py-1.5 text-right tabular-nums ${better === "B" ? "text-emerald-700 font-bold" : ""}`}>{m.b.toFixed(m.unit === "" ? 2 : 1)} <span className="text-[9px] text-stone-400">{m.unit}</span></td>
+                      <td className={`px-3 py-1.5 text-right tabular-nums ${diff > 0 ? "text-amber-700" : diff < 0 ? "text-emerald-700" : "text-stone-400"}`}>{diff > 0 ? "+" : ""}{diff.toFixed(m.unit === "" ? 2 : 1)}</td>
+                      <td className="px-3 py-1.5 text-center">
+                        {better !== "—" && <span className="text-[10px] text-emerald-700 font-medium">{better}</span>}
+                        {better === "—" && <span className="text-[10px] text-stone-300">—</span>}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function CompareFeedPicker({ onPick }: { onPick: (f: SimFeed) => void }) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const filtered = FEED_LIBRARY.filter((f) => !search || f.name.toLowerCase().includes(search.toLowerCase()));
+  return (
+    <div className="relative">
+      <Button size="sm" variant="outline" className="h-6 text-[10px]" onClick={() => setOpen(!open)}>
+        <Plus className="h-3 w-3 mr-0.5" /> Ajouter
+      </Button>
+      {open && (
+        <div className="absolute z-30 mt-1 w-60 rounded-md border border-stone-200 bg-white shadow-lg right-0">
+          <div className="p-1.5 border-b border-stone-100">
+            <Input autoFocus placeholder="Rechercher..." value={search} onChange={(e) => setSearch(e.target.value)} className="h-7 text-xs" />
+          </div>
+          <div className="max-h-48 overflow-y-auto">
+            {filtered.slice(0, 20).map((f, i) => (
+              <button key={i} className="w-full text-left px-2 py-1 text-[10px] hover:bg-stone-50 border-b border-stone-100"
+                onClick={() => { onPick(f); setOpen(false); setSearch(""); }}>
+                <span className="font-medium">{f.name}</span>
+                <span className="text-stone-400 ml-1">UFL {f.ufl} · CB {f.cb}%</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 function RumenVisualization({ state, feeds, pHStatus, hour }: { state: RumenState; feeds: SimFeed[]; pHStatus: any; hour: number }) {
   const width = 400;
