@@ -115,8 +115,29 @@ export const alimData = data as unknown as AlimData;
 // Algerian feed database (59 feeds from ITGC/INRAA tables)
 export const algerianFeeds = algerianFeedsData as unknown as AlgerianFeed[];
 
+// Make names unique by appending category when there are duplicates
+function deduplicateFeeds<T extends { name: string; category?: string }>(feeds: T[]): T[] {
+  const nameCount = new Map<string, number>();
+  const nameSeen = new Map<string, number>();
+  // Count occurrences
+  feeds.forEach((f) => nameCount.set(f.name, (nameCount.get(f.name) || 0) + 1));
+  // Append suffix for duplicates
+  return feeds.map((f) => {
+    const count = nameCount.get(f.name) || 1;
+    if (count === 1) return f;
+    const seen = (nameSeen.get(f.name) || 0) + 1;
+    nameSeen.set(f.name, seen);
+    if (seen === 1) return f; // first occurrence keeps original name
+    const cat = (f as any).category || "";
+    const suffix = cat ? ` (${cat})` : ` (${seen})`;
+    return { ...f, name: `${f.name}${suffix}` };
+  });
+}
+
+const dedupedAlgerianFeeds = deduplicateFeeds(algerianFeeds);
+
 // Combined feed list: Algerian feeds compatible with FourrageRecord/ConcentreRecord format
-export const algerianFourrages: FourrageRecord[] = algerianFeeds
+export const algerianFourrages: FourrageRecord[] = dedupedAlgerianFeeds
   .filter((f) => f.kind === "fourrage")
   .map((f) => ({
     name: `[DZ] ${f.name}`,
@@ -132,7 +153,7 @@ export const algerianFourrages: FourrageRecord[] = algerianFeeds
     price: f.price,
   }));
 
-export const algerianConcentres: ConcentreRecord[] = algerianFeeds
+export const algerianConcentres: ConcentreRecord[] = dedupedAlgerianFeeds
   .filter((f) => f.kind === "concentre")
   .map((f) => ({
     name: `[DZ] ${f.name}`,

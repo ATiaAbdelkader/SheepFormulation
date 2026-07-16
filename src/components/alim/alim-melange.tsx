@@ -300,7 +300,7 @@ function TwoMixTab() {
               <Label className="text-xs">Concentré N°1</Label>
               <Select value={c1Id} onValueChange={setC1Id}>
                 <SelectTrigger className="h-9"><SelectValue placeholder="Sélectionner..." /></SelectTrigger>
-                <SelectContent>{allConcentres.map((c) => <SelectItem key={c.name} value={c.name}>{c.name}</SelectItem>)}</SelectContent>
+                <SelectContent>{allConcentres.map((c, i) => <SelectItem key={`${c.name}-${i}`} value={c.name}>{c.name}</SelectItem>)}</SelectContent>
               </Select>
               {c1 && <FeedMini c={c1} />}
             </div>
@@ -308,7 +308,7 @@ function TwoMixTab() {
               <Label className="text-xs">Concentré N°2</Label>
               <Select value={c2Id} onValueChange={setC2Id}>
                 <SelectTrigger className="h-9"><SelectValue placeholder="Sélectionner..." /></SelectTrigger>
-                <SelectContent>{allConcentres.map((c) => <SelectItem key={c.name} value={c.name}>{c.name}</SelectItem>)}</SelectContent>
+                <SelectContent>{allConcentres.map((c, i) => <SelectItem key={`${c.name}-${i}`} value={c.name}>{c.name}</SelectItem>)}</SelectContent>
               </Select>
               {c2 && <FeedMini c={c2} />}
             </div>
