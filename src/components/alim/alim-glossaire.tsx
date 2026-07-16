@@ -1,180 +1,79 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { GLOSSARY, CATEGORIES, generateBibTeX, generateRIS, type Language, type GlossaryEntry } from "@/lib/glossary-data";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { BookOpen, Search, Calculator, FlaskConical, Scale, Leaf, DollarSign } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
+import {
+  BookOpen, Search, Calculator, Languages, FileText, Copy, CheckCircle2,
+  Info, ArrowRight, FlaskConical, Zap, Euro, ChevronDown, ChevronRight,
+  Download,
+} from "lucide-react";
 
-type GlossaryEntry = {
-  symbol: string;
-  name: string;
-  category: "energie" | "proteines" | "mineraux" | "ingestion" | "economie" | "indicateur";
-  unit: string;
-  description: string;
-  formula?: string;
-  reference: string;
-  normalRange?: string;
-};
-
-const GLOSSARY: GlossaryEntry[] = [
-  // Énergie
-  {
-    symbol: "UFL",
-    name: "Unité Fourragère Lait",
-    category: "energie",
-    unit: "UFL/kg MS",
-    description: "Unité de référence pour l'énergie nette destinée à la production laitière et l'entretien. 1 UFL = 1700 kcal d'énergie nette. Utilisée pour les brebis, agnelles et béliers.",
-    reference: "INRA 2018 — Système d'unités fourragères",
-    normalRange: "Fourrages: 0.4–1.0 UFL/kg MS · Concentrés: 0.8–1.3 UFL/kg MS",
-  },
-  {
-    symbol: "UFV",
-    name: "Unité Fourragère Viande",
-    category: "energie",
-    unit: "UFV/kg MS",
-    description: "Unité d'énergie nette pour la production de viande. Utilisée principalement pour les agneaux à l'engrais. 1 UFV ≈ 1.82 UFL (selon le type d'animal).",
-    reference: "INRA 2018",
-    normalRange: "Agneaux: besoin de 0.6 à 1.5 UFV/j selon le poids et le GMQ",
-  },
-  {
-    symbol: "UEM",
-    name: "Unité d'Encombrement Mouton",
-    category: "ingestion",
-    unit: "UEM",
-    description: "Mesure la capacité d'ingestion de l'animal. Une UEM correspond à environ 1.7 kg de MS de foin. La somme des UEM des aliments ne doit pas dépasser la capacité d'ingestion de l'animal.",
-    reference: "INRA 2018 — Capacité d'ingestion",
-    normalRange: "Brebis 70 kg: 1.5–2.5 UEM/j · Bélier: 2.0–3.0 UEM/j",
-  },
-  {
-    symbol: "DERm",
-    name: "Densité Énergétique de la Ration minimale",
-    category: "indicateur",
-    unit: "UFL/UEM",
-    description: "Rapport entre les besoins en UFL et la capacité d'ingestion (UEM). Indique la densité énergétique minimale que doit avoir la ration pour couvrir les besoins sans dépasser la capacité d'ingestion.",
-    formula: "DERm = Besoins UFL / Capacité d'ingestion (UEM)",
-    reference: "INRA 2018",
-    normalRange: "Brebis gestantes: 0.6–0.8 · Brebis allaitantes: 0.9–1.1",
-  },
-  // Protéines
-  {
-    symbol: "PDIN",
-    name: "Protéines Digestibles Intestinales (azote)",
-    category: "proteines",
-    unit: "g/kg MS",
-    description: "Protéines réellement absorbées dans l'intestin, issues de la dégradation de l'azote alimentaire non utilisisé par les microbes du rumen. Réflette l'apport protéique alimentaire.",
-    reference: "INRA 2018 — Système PDI",
-    normalRange: "Fourrages: 50–120 g/kg · Concentrés: 60–350 g/kg",
-  },
-  {
-    symbol: "PDIE",
-    name: "Protéines Digestibles Intestinales (énergie)",
-    category: "proteines",
-    unit: "g/kg MS",
-    description: "Protéines microbiennes issues de la fermentation énergétique du rumen. Limite la synthèse microbienne lorsque l'énergie est le facteur limitant.",
-    reference: "INRA 2018",
-    normalRange: "Fourrages: 50–100 g/kg · Concentrés: 60–230 g/kg",
-  },
-  {
-    symbol: "PDI",
-    name: "Protéines Digestibles Intestinales",
-    category: "proteines",
-    unit: "g/jour",
-    description: "Protéines réellement disponibles pour l'animal. Le PDI effectif est le minimum entre PDIN et PDIE (le facteur limitant détermine l'apport réel).",
-    formula: "PDI = min(PDIN, PDIE)",
-    reference: "INRA 2018",
-    normalRange: "Brebis 70 kg gestante: 100–180 g/j · Allaitante: 150–280 g/j",
-  },
-  {
-    symbol: "RMIC",
-    name: "Rumen Microbial Nitrogen Balance",
-    category: "indicateur",
-    unit: "g PDI/UFL",
-    description: "Indicateur de l'équilibre entre l'azote et l'énergie disponibles pour les microbes du rumen. Une valeur trop négative indique un déficit en azote dégradable, limitant la synthèse microbienne.",
-    formula: "RMIC = (PDIN - PDIE) / UFL",
-    reference: "INRA 2018",
-    normalRange: "> -12 (agneaux simples) · > -6 (agneaux doubles) · Idéalement proche de 0",
-  },
-  // Minéraux
-  {
-    symbol: "Pabs",
-    name: "Phosphore absorbable",
-    category: "mineraux",
-    unit: "g/kg MS",
-    description: "Phosphore réellement disponible pour l'animal après absorption intestinale. Essentiel pour la croissance osseuse, le métabolisme énergétique et la reproduction.",
-    reference: "INRA 2018",
-    normalRange: "Fourrages: 1.0–4.0 g/kg · Concentrés: 0.5–9.0 g/kg",
-  },
-  {
-    symbol: "Caabs",
-    name: "Calcium absorbable",
-    category: "mineraux",
-    unit: "g/kg MS",
-    description: "Calcium réellement disponible pour l'animal. Critique pour la croissance osseuse, la lactation et la contraction musculaire.",
-    reference: "INRA 2018",
-    normalRange: "Fourrages: 0.5–5.0 g/kg · Concentrés: 0.3–11.0 g/kg",
-  },
-  {
-    symbol: "Ca/P",
-    name: "Rapport Calcium/Phosphore",
-    category: "indicateur",
-    unit: "ratio",
-    description: "Rapport entre le calcium absorbable et le phosphore absorbable. Un rapport équilibré est crucial pour éviter les calculs urinaires (trop de P) ou les troubles de l'absorption (trop de Ca).",
-    formula: "Ca/P = Caabs / Pabs",
-    reference: "INRA 2018",
-    normalRange: "Optimal: 1.0–1.5 · < 1.0 = risque de calculs · > 2.0 = interfère avec l'absorption du P",
-  },
-  {
-    symbol: "CMV",
-    name: "Complément Minéral Vitaminé",
-    category: "mineraux",
-    unit: "g/jour",
-    description: "Mélange de minéraux (Ca, P, Mg, Na, oligo-éléments) et vitamines (A, D3, E) utilisé pour corriger les déficits minéraux de la ration. Le choix du CMV dépend du rapport Ca/P du déficit.",
-    reference: "INRA 2018",
-    normalRange: "10–50 g/animal/jour selon le déficit",
-  },
-  // Économie
-  {
-    symbol: "€/UFL",
-    name: "Coût par Unité Fourragère Lait",
-    category: "economie",
-    unit: "€/UFL",
-    description: "Indicateur économique permettant de comparer l'efficience énergétique des rations. Plus le coût par UFL est bas, plus la ration est économique.",
-    formula: "Coût/UFL = Coût total de la ration / UFL totaux",
-    reference: "Calcul OvinFormulation",
-    normalRange: "Fourrages: 0.05–0.20 €/UFL · Concentrés: 0.15–0.50 €/UFL",
-  },
-  {
-    symbol: "€/kg MS",
-    name: "Coût par kg de matière sèche",
-    category: "economie",
-    unit: "€/kg MS",
-    description: "Coût unitaire de la matière sèche de la ration. Permet de comparer des rations indépendamment de leur concentration énergétique.",
-    formula: "Coût/kg MS = Coût total / MS totale",
-    reference: "Calcul OvinFormulation",
-  },
-];
-
-const CATEGORIES = [
-  { id: "all", label: "Toutes", icon: BookOpen, color: "text-stone-700" },
-  { id: "energie", label: "Énergie", icon: Calculator, color: "text-amber-700" },
-  { id: "proteines", label: "Protéines", icon: FlaskConical, color: "text-emerald-700" },
-  { id: "mineraux", label: "Minéraux", icon: Scale, color: "text-rose-700" },
-  { id: "ingestion", label: "Ingestion", icon: Leaf, color: "text-lime-700" },
-  { id: "economie", label: "Économie", icon: DollarSign, color: "text-amber-700" },
-  { id: "indicateur", label: "Indicateurs", icon: BookOpen, color: "text-cyan-700" },
-] as const;
+type Tab = "encyclopedia" | "calculators" | "multilingual" | "references";
 
 export function AlimGlossaire() {
+  const [tab, setTab] = useState<Tab>("encyclopedia");
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-col gap-1">
+        <h2 className="text-xl font-bold text-stone-900 flex items-center gap-2">
+          <BookOpen className="h-5 w-5 text-cyan-700" />
+          Encyclopédie interactive de nutrition ovine
+        </h2>
+        <p className="text-sm text-stone-500">
+          {GLOSSARY.length} termes en FR/EN/AR avec calculateurs intégrés, formules interactives et export de citations.
+        </p>
+      </div>
+
+      <div className="flex flex-wrap gap-1 border-b border-stone-200 pb-1">
+        <TabButton active={tab === "encyclopedia"} onClick={() => setTab("encyclopedia")} icon={<BookOpen className="h-3.5 w-3.5" />} label="Encyclopédie" />
+        <TabButton active={tab === "calculators"} onClick={() => setTab("calculators")} icon={<Calculator className="h-3.5 w-3.5" />} label="Calculateurs" />
+        <TabButton active={tab === "multilingual"} onClick={() => setTab("multilingual")} icon={<Languages className="h-3.5 w-3.5" />} label="Multilingue (FR/EN/AR)" />
+        <TabButton active={tab === "references"} onClick={() => setTab("references")} icon={<FileText className="h-3.5 w-3.5" />} label="Références" />
+      </div>
+
+      {tab === "encyclopedia" && <EncyclopediaTab />}
+      {tab === "calculators" && <CalculatorsTab />}
+      {tab === "multilingual" && <MultilingualTab />}
+      {tab === "references" && <ReferencesTab />}
+    </div>
+  );
+}
+
+function TabButton({ active, onClick, icon, label }: { active: boolean; onClick: () => void; icon: React.ReactNode; label: string }) {
+  return (
+    <button onClick={onClick}
+      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-t-md text-xs font-medium transition-colors ${
+        active ? "bg-cyan-100 text-cyan-900 border-b-2 border-cyan-600" : "text-stone-600 hover:bg-stone-100"
+      }`}>
+      {icon}{label}
+    </button>
+  );
+}
+
+// ==================== ENCYCLOPEDIA TAB ====================
+function EncyclopediaTab() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string>("all");
+  const [expanded, setExpanded] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
     return GLOSSARY.filter((g) => {
       if (search) {
         const s = search.toLowerCase();
-        return g.symbol.toLowerCase().includes(s) || g.name.toLowerCase().includes(s) || g.description.toLowerCase().includes(s);
+        return g.symbol.toLowerCase().includes(s) ||
+          g.names.fr.toLowerCase().includes(s) ||
+          g.names.en.toLowerCase().includes(s) ||
+          g.names.ar.includes(search) ||
+          g.descriptions.fr.toLowerCase().includes(s);
       }
       if (category !== "all" && g.category !== category) return false;
       return true;
@@ -182,135 +81,335 @@ export function AlimGlossaire() {
   }, [search, category]);
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col gap-1">
-        <h2 className="text-xl font-bold text-stone-900 flex items-center gap-2">
-          <BookOpen className="h-5 w-5 text-cyan-700" />
-          Glossaire & références
-        </h2>
-        <p className="text-sm text-stone-500">
-          Définitions des unités alimentaires (INRA 2018), formules de calcul, plages de valeurs normales
-          et références bibliographiques utilisées dans OvinFormulation.
-        </p>
-      </div>
-
-      {/* Filters */}
+    <div className="space-y-3">
+      {/* Search & filters */}
       <Card className="border-stone-200">
-        <CardContent className="p-3 space-y-3">
+        <CardContent className="p-3 space-y-2">
           <div className="relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-stone-400" />
-            <Input
-              placeholder="Rechercher un terme, une unité, une formule..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 h-9"
-            />
+            <Input placeholder="Rechercher en FR / EN / AR..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 h-9" />
           </div>
           <div className="flex flex-wrap gap-1.5">
-            {CATEGORIES.map((c) => {
-              const Icon = c.icon;
-              return (
-                <button
-                  key={c.id}
-                  onClick={() => setCategory(c.id)}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                    category === c.id
-                      ? "bg-stone-900 text-white"
-                      : "bg-stone-100 text-stone-700 hover:bg-stone-200"
-                  }`}
-                >
-                  <Icon className="h-3 w-3" />
-                  {c.label}
-                </button>
-              );
-            })}
+            {CATEGORIES.map((c) => (
+              <button key={c.id} onClick={() => setCategory(c.id)}
+                className={`text-xs px-2.5 py-1 rounded-md ${category === c.id ? "bg-stone-900 text-white" : "bg-stone-100 text-stone-700 hover:bg-stone-200"}`}>
+                {c.icon} {c.label.fr}
+              </button>
+            ))}
           </div>
         </CardContent>
       </Card>
 
-      <div className="flex items-center justify-between">
-        <Badge variant="outline" className="bg-stone-50">
-          {filtered.length} terme{filtered.length > 1 ? "s" : ""}
-        </Badge>
-        <span className="text-[10px] text-stone-500">Référence principale : INRA 2018 — Alimentation des ruminants</span>
-      </div>
+      <Badge variant="outline" className="bg-stone-50">{filtered.length} terme(s)</Badge>
 
       {/* Entries */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        {filtered.map((g, i) => (
-          <Card key={i} className="border-stone-200 hover:shadow-md transition-shadow">
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex items-center gap-2 min-w-0">
+      <div className="space-y-2">
+        {filtered.map((g) => (
+          <Card key={g.id} className="border-stone-200 hover:shadow-md transition-shadow">
+            <div className="p-3">
+              <button onClick={() => setExpanded(expanded === g.id ? null : g.id)}
+                className="w-full flex items-start justify-between gap-2 text-left">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
                   <span className="inline-flex items-center justify-center rounded-md bg-stone-900 text-white px-2.5 py-1 text-sm font-bold font-mono flex-shrink-0">
                     {g.symbol}
                   </span>
                   <div className="min-w-0">
-                    <CardTitle className="text-sm font-semibold text-stone-900">{g.name}</CardTitle>
-                    <CardDescription className="text-[10px]">{g.unit}</CardDescription>
+                    <div className="text-sm font-semibold text-stone-900">{g.names.fr}</div>
+                    <div className="text-[10px] text-stone-500">{g.unit}</div>
                   </div>
                 </div>
-                <Badge variant="outline" className={`text-[9px] flex-shrink-0 ${getCategoryColor(g.category)}`}>
-                  {CATEGORIES.find((c) => c.id === g.category)?.label}
-                </Badge>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  {g.calculator && <Badge variant="outline" className="text-[9px] bg-cyan-50 text-cyan-700"><Calculator className="h-2.5 w-2.5 mr-0.5" />Calculateur</Badge>}
+                  <Badge variant="outline" className="text-[9px]">
+                    {CATEGORIES.find((c) => c.id === g.category)?.icon} {CATEGORIES.find((c) => c.id === g.category)?.label.fr}
+                  </Badge>
+                  {expanded === g.id ? <ChevronDown className="h-4 w-4 text-stone-400" /> : <ChevronRight className="h-4 w-4 text-stone-400" />}
+                </div>
+              </button>
+
+              {/* Expanded content */}
+              {expanded === g.id && (
+                <div className="mt-3 pt-3 border-t border-stone-200 space-y-3">
+                  {/* Description */}
+                  <p className="text-xs text-stone-700 leading-relaxed">{g.descriptions.fr}</p>
+
+                  {/* Multilingual names */}
+                  <div className="flex flex-wrap gap-2 text-[10px]">
+                    <span className="px-2 py-0.5 rounded bg-stone-100">🇫🇷 {g.names.fr}</span>
+                    <span className="px-2 py-0.5 rounded bg-stone-100">🇬🇧 {g.names.en}</span>
+                    <span className="px-2 py-0.5 rounded bg-stone-100" dir="rtl">🇩🇿 {g.names.ar}</span>
+                  </div>
+
+                  {/* Formula */}
+                  {g.formula && (
+                    <div className="rounded-md bg-amber-50 border border-amber-200 p-2">
+                      <div className="text-[9px] text-amber-700 uppercase font-medium mb-0.5">Formule</div>
+                      <code className="text-xs font-mono text-amber-900">{g.formula}</code>
+                    </div>
+                  )}
+
+                  {/* Normal range */}
+                  {g.normalRange && (
+                    <div className="rounded-md bg-stone-50 p-2">
+                      <div className="text-[9px] text-stone-500 uppercase font-medium mb-0.5">Plage normale</div>
+                      <div className="text-xs text-stone-700">{g.normalRange}</div>
+                    </div>
+                  )}
+
+                  {/* Embedded calculator */}
+                  {g.calculator && <EmbeddedCalculator entry={g} />}
+
+                  {/* Related terms */}
+                  {g.related && g.related.length > 0 && (
+                    <div className="flex items-center gap-2 text-[10px]">
+                      <span className="text-stone-500 uppercase font-medium">Voir aussi:</span>
+                      {g.related.map((r) => {
+                        const related = GLOSSARY.find((g) => g.id === r);
+                        return related ? (
+                          <button key={r} onClick={() => setExpanded(related.id)}
+                            className="px-1.5 py-0.5 rounded bg-cyan-50 text-cyan-700 hover:bg-cyan-100">
+                            {related.symbol}
+                          </button>
+                        ) : null;
+                      })}
+                    </div>
+                  )}
+
+                  {/* Reference */}
+                  <div className="text-[10px] text-stone-400 italic">
+                    <BookOpen className="h-3 w-3 inline mr-1" />{g.reference}
+                  </div>
+                </div>
+              )}
+            </div>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ==================== EMBEDDED CALCULATOR ====================
+function EmbeddedCalculator({ entry }: { entry: GlossaryEntry }) {
+  const calc = entry.calculator!;
+  const [inputs, setInputs] = useState<Record<string, number>>(
+    calc.inputs.reduce((acc, inp) => ({ ...acc, [inp.key]: inp.default }), {})
+  );
+
+  // Compute result directly from inputs (no setState in render)
+  const result = calc.compute(inputs);
+
+  return (
+    <div className="rounded-lg bg-cyan-50 border border-cyan-200 p-2.5">
+      <div className="text-[10px] font-medium text-cyan-700 uppercase flex items-center gap-1 mb-1.5">
+        <Calculator className="h-3 w-3" /> Calculateur intégré
+      </div>
+      <div className="grid grid-cols-2 gap-2 mb-2">
+        {calc.inputs.map((inp) => (
+          <div key={inp.key}>
+            <Label className="text-[9px] text-stone-500">{inp.label} ({inp.unit})</Label>
+            <Input type="number" step="any" value={inputs[inp.key]} onChange={(e) => setInputs({ ...inputs, [inp.key]: Number(e.target.value) || 0 })} className="h-7 text-xs" />
+          </div>
+        ))}
+      </div>
+      {result && (
+        <div className="rounded bg-white p-2 border border-cyan-200">
+          <div className="flex items-baseline justify-between">
+            <span className="text-[10px] text-stone-500">{result.label}</span>
+            <span className="text-lg font-bold text-cyan-900">
+              {result.result.toFixed(result.unit === "" ? 2 : 3)} <span className="text-[10px] text-stone-400">{result.unit}</span>
+            </span>
+          </div>
+          <p className="text-[10px] text-stone-600 mt-0.5">{result.interpretation}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ==================== CALCULATORS TAB ====================
+function CalculatorsTab() {
+  const calculators = GLOSSARY.filter((g) => g.calculator);
+
+  return (
+    <div className="space-y-3">
+      <Card className="border-cyan-200 bg-cyan-50/30">
+        <CardContent className="p-3">
+          <div className="flex items-start gap-2">
+            <Calculator className="h-4 w-4 text-cyan-700 mt-0.5 flex-shrink-0" />
+            <div className="text-xs text-stone-700">
+              <strong className="text-cyan-900">{calculators.length} calculateurs interactifs</strong> — modifiez les valeurs
+              et voyez le résultat en temps réel avec interprétation automatique.
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {calculators.map((g) => (
+          <Card key={g.id} className="border-stone-200">
+            <CardHeader className="pb-2">
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center justify-center rounded-md bg-stone-900 text-white px-2 py-0.5 text-xs font-bold font-mono">
+                  {g.symbol}
+                </span>
+                <CardTitle className="text-sm">{g.names.fr}</CardTitle>
               </div>
+              <CardDescription className="text-[10px]">{g.formula}</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-2">
-              <p className="text-xs text-stone-700 leading-relaxed">{g.description}</p>
-              {g.formula && (
-                <div className="rounded-md bg-amber-50 border border-amber-200 p-2">
-                  <div className="text-[9px] text-amber-700 uppercase font-medium mb-0.5">Formule</div>
-                  <code className="text-xs font-mono text-amber-900">{g.formula}</code>
-                </div>
-              )}
-              {g.normalRange && (
-                <div className="rounded-md bg-stone-50 p-2">
-                  <div className="text-[9px] text-stone-500 uppercase font-medium mb-0.5">Plage normale</div>
-                  <div className="text-xs text-stone-700">{g.normalRange}</div>
-                </div>
-              )}
-              <div className="text-[10px] text-stone-400 italic">
-                <BookOpen className="h-3 w-3 inline mr-1" />
-                {g.reference}
-              </div>
+            <CardContent>
+              <EmbeddedCalculator entry={g} />
             </CardContent>
           </Card>
         ))}
       </div>
+    </div>
+  );
+}
 
-      {/* References section */}
+// ==================== MULTILINGUAL TAB ====================
+function MultilingualTab() {
+  const [lang, setLang] = useState<Language>("fr");
+
+  return (
+    <div className="space-y-3">
+      {/* Language selector */}
+      <Card className="border-stone-200">
+        <CardContent className="p-3 flex items-center gap-2">
+          <Languages className="h-4 w-4 text-cyan-700" />
+          <span className="text-xs text-stone-600">Langue:</span>
+          <button onClick={() => setLang("fr")} className={`text-xs px-3 py-1 rounded-md ${lang === "fr" ? "bg-cyan-600 text-white" : "bg-stone-100"}`}>🇫🇷 Français</button>
+          <button onClick={() => setLang("en")} className={`text-xs px-3 py-1 rounded-md ${lang === "en" ? "bg-cyan-600 text-white" : "bg-stone-100"}`}>🇬🇧 English</button>
+          <button onClick={() => setLang("ar")} className={`text-xs px-3 py-1 rounded-md ${lang === "ar" ? "bg-cyan-600 text-white" : "bg-stone-100"}`}>🇩🇿 العربية</button>
+        </CardContent>
+      </Card>
+
+      {/* Glossary in selected language */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+        {GLOSSARY.map((g) => (
+          <Card key={g.id} className="border-stone-200">
+            <CardContent className="p-3">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="inline-flex items-center justify-center rounded bg-stone-900 text-white px-1.5 py-0.5 text-[10px] font-bold font-mono">
+                  {g.symbol}
+                </span>
+                <span className="text-sm font-semibold text-stone-900" dir={lang === "ar" ? "rtl" : "ltr"}>
+                  {g.names[lang]}
+                </span>
+              </div>
+              <p className="text-[11px] text-stone-600 leading-relaxed" dir={lang === "ar" ? "rtl" : "ltr"}>
+                {g.descriptions[lang]}
+              </p>
+              <div className="text-[10px] text-stone-400 mt-1">{g.unit}</div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ==================== REFERENCES TAB ====================
+function ReferencesTab() {
+  const [selectedEntry, setSelectedEntry] = useState<string>("");
+  const [copied, setCopied] = useState<string>("");
+
+  const entry = GLOSSARY.find((g) => g.id === selectedEntry);
+
+  const copyToClipboard = (text: string, type: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(type);
+    setTimeout(() => setCopied(""), 2000);
+  };
+
+  return (
+    <div className="space-y-3">
+      {/* Term selector */}
+      <Card className="border-stone-200">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-xs font-semibold">Export de citations</CardTitle>
+          <CardDescription className="text-xs">Sélectionnez un terme pour générer les citations BibTeX et RIS</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Select value={selectedEntry} onValueChange={setSelectedEntry}>
+            <SelectTrigger className="h-9"><SelectValue placeholder="Choisir un terme..." /></SelectTrigger>
+            <SelectContent className="max-h-72">
+              {GLOSSARY.map((g) => (
+                <SelectItem key={g.id} value={g.id} className="text-xs">
+                  {g.symbol} — {g.names.fr}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </CardContent>
+      </Card>
+
+      {/* Citation outputs */}
+      {entry && (
+        <div className="space-y-3">
+          {/* BibTeX */}
+          <Card className="border-stone-200">
+            <CardHeader className="pb-2">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-xs font-semibold flex items-center gap-2">
+                  <FileText className="h-3.5 w-3.5" /> BibTeX
+                </CardTitle>
+                <Button size="sm" variant="outline" className="h-6 text-[10px]" onClick={() => copyToClipboard(generateBibTeX(entry), "bibtex")}>
+                  {copied === "bibtex" ? <><CheckCircle2 className="h-3 w-3 mr-1" /> Copié</> : <><Copy className="h-3 w-3 mr-1" /> Copier</>}
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <pre className="text-[10px] font-mono text-stone-700 bg-stone-50 p-2 rounded overflow-x-auto whitespace-pre-wrap">{generateBibTeX(entry)}</pre>
+            </CardContent>
+          </Card>
+
+          {/* RIS */}
+          <Card className="border-stone-200">
+            <CardHeader className="pb-2">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-xs font-semibold flex items-center gap-2">
+                  <FileText className="h-3.5 w-3.5" /> RIS
+                </CardTitle>
+                <Button size="sm" variant="outline" className="h-6 text-[10px]" onClick={() => copyToClipboard(generateRIS(entry), "ris")}>
+                  {copied === "ris" ? <><CheckCircle2 className="h-3 w-3 mr-1" /> Copié</> : <><Copy className="h-3 w-3 mr-1" /> Copier</>}
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <pre className="text-[10px] font-mono text-stone-700 bg-stone-50 p-2 rounded overflow-x-auto whitespace-pre-wrap">{generateRIS(entry)}</pre>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Bibliography */}
       <Card className="border-stone-200 bg-stone-50">
         <CardHeader>
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
-            <BookOpen className="h-4 w-4 text-stone-600" />
-            Références bibliographiques
+          <CardTitle className="text-xs font-semibold flex items-center gap-2">
+            <BookOpen className="h-3.5 w-3.5 text-stone-600" /> Références bibliographiques
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-xs text-stone-700">
           <p className="leading-relaxed">
             <strong>INRA (2018).</strong> Alimentation des ruminants. Apports nutritionnels et besoins.
-            Éditions Quae, Versailles. 720 p.
+            Éditions Quae, Versailles. 720 p. ISBN: 978-2-7592-2966-3.
           </p>
           <p className="leading-relaxed">
-            <strong>RANOUX, F.</strong> Alim&apos;OVINS v5.1 — Rationnement des ovins. Lycée Agricole du Bourbonnais, Moulins.
+            <strong>Sauvant, D., Giger-Reverdin, S., Serment, A., et al. (2011).</strong>
+            Modélisation des flux d&apos;azote et de méthane chez les ruminants.
+            INRA Productions Animales, 24(5), 437-448.
           </p>
           <p className="leading-relaxed">
-            <strong>Atia, A.</strong> OvinFormulation v1.0 — AgriSkills Academy. Adaptation web de l&apos;outil Alim&apos;OVINS.
+            <strong>IPCC (2019).</strong> 2019 Refinement to the 2006 IPCC Guidelines for National
+            Greenhouse Gas Inventories: Volume 4 — Agriculture, Forestry and Other Land Use.
+          </p>
+          <p className="leading-relaxed">
+            <strong>Atia, A.</strong> OvinFormulation v1.0 — AgriSkills Academy.
+            Adaptation web de l&apos;outil Alim&apos;OVINS v5.1 (RANOUX F., Lycée Agricole du Bourbonnais).
           </p>
         </CardContent>
       </Card>
     </div>
   );
-}
-
-function getCategoryColor(cat: string): string {
-  const map: Record<string, string> = {
-    energie: "bg-amber-100 text-amber-800",
-    proteines: "bg-emerald-100 text-emerald-800",
-    mineraux: "bg-rose-100 text-rose-800",
-    ingestion: "bg-lime-100 text-lime-800",
-    economie: "bg-yellow-100 text-yellow-800",
-    indicateur: "bg-cyan-100 text-cyan-800",
-  };
-  return map[cat] || "bg-stone-100 text-stone-800";
 }
