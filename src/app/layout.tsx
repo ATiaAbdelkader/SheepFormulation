@@ -1,22 +1,20 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Cairo } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { LanguageProvider } from "@/lib/language-context";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const cairo = Cairo({
+  variable: "--font-cairo",
+  subsets: ["arabic", "latin", "latin-ext"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "OvinFormulation v1.0 — Rationnement des ovins",
-  description: "Outil pédagogique de formulation de rations pour ovins : besoins des animaux, valeurs alimentaires des fourrages et concentrés, calcul de ration, bilan fourrager, suivi de pâturage. D'après Abdelkader Atia, AgriSkills Academy.",
-  keywords: ["ovins", "brebis", "ration", "alimentation", "fourrage", "UFL", "PDI", "Agneaux", "OvinFormulation"],
+  title: "OvinFormulation v1.0 — Sheep Feed Formulation | تركيب علائق الأغنام",
+  description: "Professional sheep feed formulation platform: ration calculator, LP optimization, rumen simulator, AI assistant, feed mill management. FR/EN/AR.",
+  keywords: ["ovins", "sheep", "ration", "feed formulation", "أغنام", "عليقة", "UFL", "PDI", "AgriSkills Academy"],
   authors: [{ name: "Abdelkader Atia - AgriSkills Academy" }],
   manifest: "/manifest.json",
   appleWebApp: {
@@ -56,11 +54,13 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
+        className={`${cairo.variable} font-cairo antialiased bg-background text-foreground`}
+        style={{ fontFamily: "var(--font-cairo), system-ui, sans-serif" }}
       >
-        {children}
-        <Toaster />
-        {/* Service Worker Registration */}
+        <LanguageProvider>
+          {children}
+          <Toaster />
+        </LanguageProvider>
         <script
           dangerouslySetInnerHTML={{
             __html: `

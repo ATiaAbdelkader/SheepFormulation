@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect, type ReactNode } from "react";
-import { LayoutDashboard, Users, Wheat, Sprout, Pill, Calculator, Baby, Scale, Blend, Trees, Zap, GitCompare, FlaskConical, BookOpen, CalendarDays, Telescope, ShieldCheck, Sparkles, Atom, GraduationCap, Menu, X, Lock, ChevronDown, Factory, Check, Package, GitBranch } from "lucide-react";
+import { LayoutDashboard, Users, Wheat, Sprout, Pill, Calculator, Baby, Scale, Blend, Trees, Zap, GitCompare, FlaskConical, BookOpen, CalendarDays, Telescope, ShieldCheck, Sparkles, Atom, GraduationCap, Menu, X, Lock, ChevronDown, Factory, Check, Package, GitBranch, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/language-context";
+import { LANGUAGES, type Language } from "@/lib/i18n";
 import {
   type UserRole, ROLES, MODULE_ACCESS, LOCKED_MODULES,
   canAccess, getStoredRole, setStoredRole, getRoleInfo, getNextRole,
@@ -39,36 +41,39 @@ type AlimView =
   | "glossaire" | "calendrier" | "prevision" | "rumen-sim" | "classroom"
   | "production";
 
-const NAV_ITEMS: { id: AlimView; label: string; description: string; icon: ReactNode }[] = [
-  { id: "dashboard", label: "Tableau de bord", description: "Vue d'ensemble", icon: <LayoutDashboard className="h-5 w-5" /> },
-  { id: "ration", label: "Ration", description: "Établir une ration", icon: <Calculator className="h-5 w-5" /> },
-  { id: "ai-ration", label: "Assistant IA", description: "Générer une ration par IA", icon: <Sparkles className="h-5 w-5" /> },
-  { id: "verificateur", label: "Vérificateur", description: "Analyser une ration inconnue", icon: <ShieldCheck className="h-5 w-5" /> },
-  { id: "optimisation", label: "Optimisation", description: "Moindre coût (LP)", icon: <Zap className="h-5 w-5" /> },
-  { id: "comparer", label: "Comparer", description: "Simulateur de scénarios", icon: <GitCompare className="h-5 w-5" /> },
-  { id: "custom-feeds", label: "Mes aliments", description: "Aliments personnalisés", icon: <FlaskConical className="h-5 w-5" /> },
-  { id: "animals", label: "Animaux", description: "Besoins alimentaires", icon: <Users className="h-5 w-5" /> },
-  { id: "fourrages", label: "Fourrages", description: "Base & qualité", icon: <Wheat className="h-5 w-5" /> },
-  { id: "concentres", label: "Concentrés", description: "Marché & fournisseurs", icon: <Sprout className="h-5 w-5" /> },
-  { id: "cmv", label: "CMV", description: "Assistant de sélection", icon: <Pill className="h-5 w-5" /> },
-  { id: "agneaux", label: "Agneaux", description: "Besoins à l'engrais", icon: <Baby className="h-5 w-5" /> },
-  { id: "bilan", label: "Bilan fourrager", description: "Bilan du troupeau", icon: <Scale className="h-5 w-5" /> },
-  { id: "melange", label: "Mélange", description: "Calculateur avancé", icon: <Blend className="h-5 w-5" /> },
-  { id: "paturage", label: "Pâturage", description: "Jours d'avance", icon: <Trees className="h-5 w-5" /> },
-  { id: "glossaire", label: "Glossaire", description: "Encyclopédie FR/EN/AR", icon: <BookOpen className="h-5 w-5" /> },
-  { id: "calendrier", label: "Calendrier", description: "Planning du troupeau", icon: <CalendarDays className="h-5 w-5" /> },
-  { id: "prevision", label: "Prévision", description: "Décodeur d'étiquette", icon: <Telescope className="h-5 w-5" /> },
-  { id: "rumen-sim", label: "Rumen Lab", description: "Laboratoire interactif", icon: <Atom className="h-5 w-5" /> },
-  { id: "classroom", label: "Classe", description: "Académie LMS", icon: <GraduationCap className="h-5 w-5" /> },
-  { id: "production", label: "Production", description: "Batches & traçabilité", icon: <Factory className="h-5 w-5" /> },
-];
-
 export default function Home() {
+  const { lang, setLang, t } = useLanguage();
   const [view, setView] = useState<AlimView>("dashboard");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [role, setRole] = useState<UserRole>("farmer");
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
   const [upgradeModal, setUpgradeModal] = useState<{ moduleId: string; moduleLabel: string; requiredRole: UserRole } | null>(null);
+
+  // Build nav items with translations
+  const navItems = [
+    { id: "dashboard" as AlimView, label: t("nav_dashboard"), desc: t("nav_dashboard_desc"), icon: <LayoutDashboard className="h-5 w-5" /> },
+    { id: "ration" as AlimView, label: t("nav_ration"), desc: t("nav_ration_desc"), icon: <Calculator className="h-5 w-5" /> },
+    { id: "ai-ration" as AlimView, label: t("nav_ai_ration"), desc: t("nav_ai_ration_desc"), icon: <Sparkles className="h-5 w-5" /> },
+    { id: "verificateur" as AlimView, label: t("nav_verificateur"), desc: t("nav_verificateur_desc"), icon: <ShieldCheck className="h-5 w-5" /> },
+    { id: "optimisation" as AlimView, label: t("nav_optimisation"), desc: t("nav_optimisation_desc"), icon: <Zap className="h-5 w-5" /> },
+    { id: "comparer" as AlimView, label: t("nav_comparer"), desc: t("nav_comparer_desc"), icon: <GitCompare className="h-5 w-5" /> },
+    { id: "custom-feeds" as AlimView, label: t("nav_custom_feeds"), desc: t("nav_custom_feeds_desc"), icon: <FlaskConical className="h-5 w-5" /> },
+    { id: "animals" as AlimView, label: t("nav_animals"), desc: t("nav_animals_desc"), icon: <Users className="h-5 w-5" /> },
+    { id: "fourrages" as AlimView, label: t("nav_fourrages"), desc: t("nav_fourrages_desc"), icon: <Wheat className="h-5 w-5" /> },
+    { id: "concentres" as AlimView, label: t("nav_concentres"), desc: t("nav_concentres_desc"), icon: <Sprout className="h-5 w-5" /> },
+    { id: "cmv" as AlimView, label: t("nav_cmv"), desc: t("nav_cmv_desc"), icon: <Pill className="h-5 w-5" /> },
+    { id: "agneaux" as AlimView, label: t("nav_agneaux"), desc: t("nav_agneaux_desc"), icon: <Baby className="h-5 w-5" /> },
+    { id: "bilan" as AlimView, label: t("nav_bilan"), desc: t("nav_bilan_desc"), icon: <Scale className="h-5 w-5" /> },
+    { id: "melange" as AlimView, label: t("nav_melange"), desc: t("nav_melange_desc"), icon: <Blend className="h-5 w-5" /> },
+    { id: "paturage" as AlimView, label: t("nav_paturage"), desc: t("nav_paturage_desc"), icon: <Trees className="h-5 w-5" /> },
+    { id: "glossaire" as AlimView, label: t("nav_glossaire"), desc: t("nav_glossaire_desc"), icon: <BookOpen className="h-5 w-5" /> },
+    { id: "calendrier" as AlimView, label: t("nav_calendrier"), desc: t("nav_calendrier_desc"), icon: <CalendarDays className="h-5 w-5" /> },
+    { id: "prevision" as AlimView, label: t("nav_prevision"), desc: t("nav_prevision_desc"), icon: <Telescope className="h-5 w-5" /> },
+    { id: "rumen-sim" as AlimView, label: t("nav_rumen_sim"), desc: t("nav_rumen_sim_desc"), icon: <Atom className="h-5 w-5" /> },
+    { id: "classroom" as AlimView, label: t("nav_classroom"), desc: t("nav_classroom_desc"), icon: <GraduationCap className="h-5 w-5" /> },
+    { id: "production" as AlimView, label: t("nav_production"), desc: t("nav_production_desc"), icon: <Factory className="h-5 w-5" /> },
+  ];
 
   // Load role from localStorage on mount
   useEffect(() => {
@@ -107,10 +112,10 @@ export default function Home() {
   const roleInfo = getRoleInfo(role);
 
   // Split nav items: accessible + locked
-  const accessibleItems = NAV_ITEMS.filter((item) => canAccess(role, item.id));
+  const accessibleItems = navItems.filter((item) => canAccess(role, item.id));
   const lockedItems = LOCKED_MODULES[role]
-    .map((locked) => NAV_ITEMS.find((n) => n.id === locked.id))
-    .filter(Boolean) as typeof NAV_ITEMS;
+    .map((locked) => navItems.find((n) => n.id === locked.id))
+    .filter(Boolean) as typeof navItems;
 
   return (
     <div className="min-h-screen flex flex-col bg-stone-50">
@@ -126,10 +131,32 @@ export default function Home() {
             </div>
             <div className="flex flex-col">
               <h1 className="text-base font-bold leading-tight text-stone-900 sm:text-lg">
-                OvinFormulation <span className="text-emerald-700">v1.0</span>
+                {t("appName")} <span className="text-emerald-700">{t("appVersion")}</span>
               </h1>
-              <p className="text-[11px] text-stone-500 leading-tight hidden sm:block">Rationnement des ovins</p>
+              <p className="text-[11px] text-stone-500 leading-tight hidden sm:block">{t("appTagline")}</p>
             </div>
+          </div>
+
+          {/* Language switcher */}
+          <div className="relative">
+            <button
+              onClick={() => setLangMenuOpen(!langMenuOpen)}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-stone-600 hover:bg-stone-100 transition-colors"
+            >
+              <Globe className="h-4 w-4" />
+              <span className="hidden sm:inline">{LANGUAGES.find((l) => l.id === lang)?.flag} {LANGUAGES.find((l) => l.id === lang)?.label}</span>
+              <span className="sm:hidden">{LANGUAGES.find((l) => l.id === lang)?.flag}</span>
+            </button>
+            {langMenuOpen && (
+              <div className="absolute right-0 mt-1 w-40 rounded-lg border border-stone-200 bg-white shadow-xl z-50">
+                {LANGUAGES.map((l) => (
+                  <button key={l.id} onClick={() => { setLang(l.id); setLangMenuOpen(false); }}
+                    className={cn("w-full text-left px-3 py-2 text-xs hover:bg-stone-50 border-b border-stone-50 last:border-0", lang === l.id && "bg-stone-50 font-medium")}>
+                    {l.flag} {l.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Role selector */}
@@ -148,7 +175,7 @@ export default function Home() {
             {roleMenuOpen && (
               <div className="absolute right-0 mt-1 w-80 rounded-lg border border-stone-200 bg-white shadow-xl z-50">
                 <div className="p-2 border-b border-stone-100">
-                  <p className="text-[10px] font-semibold text-stone-500 uppercase">Choisir votre profil</p>
+                  <p className="text-[10px] font-semibold text-stone-500 uppercase">{t("role_select")}</p>
                 </div>
                 {ROLES.map((r) => (
                   <button
@@ -163,10 +190,14 @@ export default function Home() {
                       <span className="text-xl flex-shrink-0">{r.icon}</span>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5">
-                          <span className="text-sm font-semibold text-stone-900">{r.label}</span>
+                          <span className="text-sm font-semibold text-stone-900">
+                            {r.id === "student" ? t("role_student") : r.id === "farmer" ? t("role_farmer") : t("role_feedmill")}
+                          </span>
                           {role === r.id && <Check className="h-3.5 w-3.5 text-emerald-600" />}
                         </div>
-                        <p className="text-[10px] text-stone-500 mt-0.5 leading-relaxed">{r.description}</p>
+                        <p className="text-[10px] text-stone-500 mt-0.5 leading-relaxed">
+                          {r.id === "student" ? t("role_student_desc") : r.id === "farmer" ? t("role_farmer_desc") : t("role_feedmill_desc")}
+                        </p>
                         <div className="flex flex-wrap gap-1 mt-1.5">
                           {r.features.slice(0, 3).map((f, i) => (
                             <span key={i} className="text-[8px] px-1.5 py-0.5 rounded bg-stone-100 text-stone-600">{f}</span>
@@ -212,7 +243,7 @@ export default function Home() {
               <>
                 <div className="pt-3 pb-1 px-3">
                   <span className="text-[9px] font-semibold text-stone-400 uppercase tracking-wider flex items-center gap-1">
-                    <Lock className="h-2.5 w-2.5" /> Modules premium
+                    <Lock className="h-2.5 w-2.5" /> {t("locked_premium")}
                   </span>
                 </div>
                 {lockedItems.map((item) => {
@@ -242,11 +273,13 @@ export default function Home() {
           </nav>
           <div className="border-t border-stone-200 p-3">
             <div className="flex items-center gap-2 mb-1">
-              <span className={cn("text-xs font-medium", roleInfo.color)}>{roleInfo.icon} {roleInfo.label}</span>
+              <span className={cn("text-xs font-medium", roleInfo.color)}>
+                {roleInfo.icon} {role === "student" ? t("role_student") : role === "farmer" ? t("role_farmer") : t("role_feedmill")}
+              </span>
             </div>
             <p className="text-[10px] text-stone-400 leading-relaxed">
-              {accessibleItems.length} modules accessibles
-              {lockedItems.length > 0 && ` · ${lockedItems.length} verrouillés`}
+              {accessibleItems.length} {t("common_modules")}
+              {lockedItems.length > 0 && ` · ${lockedItems.length} ${t("common_locked")}`}
             </p>
           </div>
         </aside>
@@ -359,8 +392,8 @@ export default function Home() {
       {/* Footer */}
       <footer className="mt-auto border-t border-stone-200 bg-white">
         <div className="container mx-auto px-4 sm:px-6 py-4 max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-stone-500">
-          <p>OvinFormulation v1.0 — Rationnement des ovins</p>
-          <p className="hidden sm:block">Source: Abdelkader Atia, AgriSkills Academy</p>
+          <p>{t("footer_text")}</p>
+          <p className="hidden sm:block">{t("footer_source")}</p>
         </div>
       </footer>
     </div>
@@ -377,8 +410,10 @@ function UpgradeModal({
   onClose: () => void;
   onUpgrade: () => void;
 }) {
+  const { t } = useLanguage();
   const reqInfo = getRoleInfo(requiredRole);
-  const nextRole = getNextRole(currentRole);
+  const reqLabel = requiredRole === "student" ? t("role_student") : requiredRole === "farmer" ? t("role_farmer") : t("role_feedmill");
+  const reqDesc = requiredRole === "student" ? t("role_student_desc") : requiredRole === "farmer" ? t("role_farmer_desc") : t("role_feedmill_desc");
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={onClose}>
@@ -386,14 +421,14 @@ function UpgradeModal({
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-base flex items-center gap-2">
-              <Lock className="h-4 w-4 text-stone-400" /> Module verrouillé
+              <Lock className="h-4 w-4 text-stone-400" /> {t("locked_title")}
             </CardTitle>
             <Button variant="ghost" size="icon" onClick={onClose} className="h-7 w-7">
               <X className="h-4 w-4" />
             </Button>
           </div>
           <CardDescription className="text-xs">
-            <strong>{moduleLabel}</strong> nécessite le profil <strong>{reqInfo.icon} {reqInfo.label}</strong>
+            <strong>{moduleLabel}</strong> {t("locked_requires")} <strong>{reqInfo.icon} {reqLabel}</strong>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -401,12 +436,12 @@ function UpgradeModal({
             <div className="flex items-center gap-2 mb-2">
               <span className="text-2xl">{reqInfo.icon}</span>
               <div>
-                <div className={cn("text-sm font-bold", reqInfo.color)}>{reqInfo.label}</div>
-                <p className="text-[10px] text-stone-600">{reqInfo.description}</p>
+                <div className={cn("text-sm font-bold", reqInfo.color)}>{reqLabel}</div>
+                <p className="text-[10px] text-stone-600">{reqDesc}</p>
               </div>
             </div>
             <div className="space-y-1">
-              <span className="text-[10px] font-semibold text-stone-600 uppercase">Ce que vous débloquez:</span>
+              <span className="text-[10px] font-semibold text-stone-600 uppercase">{t("locked_unlock")}</span>
               {reqInfo.features.map((f, i) => (
                 <div key={i} className="flex items-start gap-1.5 text-[11px] text-stone-700">
                   <Check className="h-3 w-3 text-emerald-600 flex-shrink-0 mt-0.5" />
@@ -416,13 +451,13 @@ function UpgradeModal({
             </div>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" className="flex-1" onClick={onClose}>Plus tard</Button>
+            <Button variant="outline" className="flex-1" onClick={onClose}>{t("locked_later")}</Button>
             <Button className="flex-1 bg-emerald-600 hover:bg-emerald-700" onClick={onUpgrade}>
-              Passer à {reqInfo.icon} {reqInfo.label}
+              {t("locked_upgrade")} {reqInfo.icon} {reqLabel}
             </Button>
           </div>
           <p className="text-[10px] text-center text-stone-400">
-            Gratuit — il suffit de changer votre profil
+            {t("locked_free")}
           </p>
         </CardContent>
       </Card>
