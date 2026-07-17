@@ -153,3 +153,114 @@ model Certificate {
 
   @@index([studentName])
 }
+
+// ---------- Feed Mill: Production & Traceability ----------
+
+model ProductionBatch {
+  id            String   @id @default(cuid())
+  batchNumber   String   @unique
+  formulaName   String
+  formulaSnapshot String
+  targetQuantityKg Float
+  actualQuantityKg Float?
+  status        String   @default("planned")
+  productionLine String  @default("Line A")
+  startDate     DateTime?
+  endDate       DateTime?
+  notes         String?
+  createdAt     DateTime @default(now())
+
+  lots          Lot[]
+
+  @@index([status])
+  @@index([productionLine])
+}
+
+model Lot {
+  id            String   @id @default(cuid())
+  lotNumber     String   @unique
+  type          String
+  feedName      String
+  quantityKg    Float
+  supplier      String?
+  receivedDate  DateTime?
+  qualityStatus String   @default("pending")
+  coaUrl        String?
+  notes         String?
+  createdAt     DateTime @default(now())
+
+  batchId       String?
+  batch         ProductionBatch? @relation(fields: [batchId], references: [id])
+  ingredientLots LotGenealogy[] @relation("IngredientLot")
+  batchLots      LotGenealogy[] @relation("BatchLot")
+  shipments      ShipmentLot[]
+
+  @@index([type])
+  @@index([qualityStatus])
+}
+
+model LotGenealogy {
+  id            String   @id @default(cuid())
+  ingredientLotId String
+  batchLotId    String
+  quantityUsedKg Float
+  createdAt     DateTime @default(now())
+
+  ingredientLot Lot @relation("IngredientLot", fields: [ingredientLotId], references: [id])
+  batchLot      Lot @relation("BatchLot", fields: [batchLotId], references: [id])
+
+  @@index([ingredientLotId])
+  @@index([batchLotId])
+}
+
+model SalesOrder {
+  id            String   @id @default(cuid())
+  orderNumber   String   @unique
+  customerName  String
+  customerPhone String?
+  customerAddress String?
+  product       String
+  quantityKg    Float
+  unitPrice     Float
+  totalAmount   Float
+  status        String   @default("pending")
+  orderDate     DateTime @default(now())
+  deliveryDate  DateTime?
+  notes         String?
+
+  shipments     Shipment[]
+
+  @@index([status])
+  @@index([customerName])
+}
+
+model Shipment {
+  id            String   @id @default(cuid())
+  shipmentNumber String  @unique
+  orderId       String
+  shipmentDate  DateTime @default(now())
+  quantityKg    Float
+  status        String   @default("pending")
+  driver        String?
+  vehicle       String?
+  notes         String?
+
+  order         SalesOrder @relation(fields: [orderId], references: [id])
+  lots          ShipmentLot[]
+
+  @@index([orderId])
+  @@index([status])
+}
+
+model ShipmentLot {
+  id            String   @id @default(cuid())
+  shipmentId    String
+  lotId         String
+  quantityKg    Float
+
+  shipment      Shipment @relation(fields: [shipmentId], references: [id])
+  lot           Lot @relation(fields: [lotId], references: [id])
+
+  @@index([shipmentId])
+  @@index([lotId])
+}

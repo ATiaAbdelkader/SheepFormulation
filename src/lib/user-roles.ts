@@ -142,11 +142,8 @@ export const MODULE_ACCESS: Record<UserRole, string[]> = {
     "bilan",
     "paturage",
     "calendrier",
-    // Feed mill-only modules (future)
+    // Feed mill-only modules
     "production",
-    "quality",
-    "traceability",
-    "distribution",
   ],
 };
 
@@ -161,15 +158,9 @@ export const LOCKED_MODULES: Record<UserRole, Array<{ id: string; label: string;
     { id: "paturage", label: "Pâturage", requiredRole: "farmer" },
     { id: "calendrier", label: "Calendrier", requiredRole: "farmer" },
     { id: "production", label: "Production", requiredRole: "feedmill" },
-    { id: "quality", label: "Qualité", requiredRole: "feedmill" },
-    { id: "traceability", label: "Traçabilité", requiredRole: "feedmill" },
-    { id: "distribution", label: "Distribution", requiredRole: "feedmill" },
   ],
   farmer: [
     { id: "production", label: "Production", requiredRole: "feedmill" },
-    { id: "quality", label: "Qualité", requiredRole: "feedmill" },
-    { id: "traceability", label: "Traçabilité", requiredRole: "feedmill" },
-    { id: "distribution", label: "Distribution", requiredRole: "feedmill" },
   ],
   feedmill: [],
 };

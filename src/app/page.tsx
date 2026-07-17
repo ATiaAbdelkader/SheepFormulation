@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, type ReactNode } from "react";
-import { LayoutDashboard, Users, Wheat, Sprout, Pill, Calculator, Baby, Scale, Blend, Trees, Zap, GitCompare, FlaskConical, BookOpen, CalendarDays, Telescope, ShieldCheck, Sparkles, Atom, GraduationCap, Menu, X, Lock, ChevronDown, Factory, Check } from "lucide-react";
+import { LayoutDashboard, Users, Wheat, Sprout, Pill, Calculator, Baby, Scale, Blend, Trees, Zap, GitCompare, FlaskConical, BookOpen, CalendarDays, Telescope, ShieldCheck, Sparkles, Atom, GraduationCap, Menu, X, Lock, ChevronDown, Factory, Check, Package, GitBranch } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -30,12 +30,14 @@ import { AlimCalendrier } from "@/components/alim/alim-calendrier";
 import { AlimPrevision } from "@/components/alim/alim-prevision";
 import { AlimRumenSim } from "@/components/alim/alim-rumen-sim";
 import { AlimClassroom } from "@/components/alim/alim-classroom";
+import { AlimProduction } from "@/components/alim/alim-production";
 
 type AlimView =
   | "dashboard" | "animals" | "fourrages" | "concentres" | "cmv"
   | "ration" | "verificateur" | "ai-ration" | "optimisation" | "comparer"
   | "custom-feeds" | "agneaux" | "bilan" | "melange" | "paturage"
-  | "glossaire" | "calendrier" | "prevision" | "rumen-sim" | "classroom";
+  | "glossaire" | "calendrier" | "prevision" | "rumen-sim" | "classroom"
+  | "production";
 
 const NAV_ITEMS: { id: AlimView; label: string; description: string; icon: ReactNode }[] = [
   { id: "dashboard", label: "Tableau de bord", description: "Vue d'ensemble", icon: <LayoutDashboard className="h-5 w-5" /> },
@@ -58,6 +60,7 @@ const NAV_ITEMS: { id: AlimView; label: string; description: string; icon: React
   { id: "prevision", label: "Prévision", description: "Décodeur d'étiquette", icon: <Telescope className="h-5 w-5" /> },
   { id: "rumen-sim", label: "Rumen Lab", description: "Laboratoire interactif", icon: <Atom className="h-5 w-5" /> },
   { id: "classroom", label: "Classe", description: "Académie LMS", icon: <GraduationCap className="h-5 w-5" /> },
+  { id: "production", label: "Production", description: "Batches & traçabilité", icon: <Factory className="h-5 w-5" /> },
 ];
 
 export default function Home() {
@@ -333,6 +336,7 @@ export default function Home() {
             {view === "prevision" && <AlimPrevision />}
             {view === "rumen-sim" && <AlimRumenSim />}
             {view === "classroom" && <AlimClassroom />}
+            {view === "production" && <AlimProduction />}
           </div>
         </main>
       </div>
