@@ -2,6 +2,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { alimData } from "@/lib/alim-data";
+import { ROICalculator } from "./alim-roi-calculator";
+import type { UserRole } from "@/lib/user-roles";
 import {
   Users,
   Wheat,
@@ -134,7 +136,7 @@ const colorClasses: Record<string, { bg: string; text: string; ring: string; dot
   green: { bg: "bg-green-50", text: "text-green-700", ring: "hover:ring-green-200", dot: "bg-green-600" },
 };
 
-export function AlimDashboard({ onNavigate }: { onNavigate: (v: AlimView) => void }) {
+export function AlimDashboard({ onNavigate, role = "farmer" }: { onNavigate: (v: AlimView) => void; role?: UserRole }) {
   return (
     <div className="space-y-6">
       {/* Hero */}
@@ -217,6 +219,9 @@ export function AlimDashboard({ onNavigate }: { onNavigate: (v: AlimView) => voi
           })}
         </div>
       </div>
+
+      {/* ROI Calculator */}
+      <ROICalculator role={role} />
 
       {/* About section */}
       <Card className="border-stone-200 bg-white">

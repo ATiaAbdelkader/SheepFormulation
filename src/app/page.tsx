@@ -313,7 +313,7 @@ export default function Home() {
         {/* Main content */}
         <main className="flex-1 min-w-0">
           <div className="container mx-auto px-4 sm:px-6 py-6 max-w-7xl">
-            {view === "dashboard" && <AlimDashboard onNavigate={handleNav} />}
+            {view === "dashboard" && <AlimDashboard onNavigate={handleNav} role={role} />}
             {view === "ration" && <AlimRationPro />}
             {view === "ai-ration" && <AlimAIRation />}
             {view === "verificateur" && <AlimVerificateur />}
