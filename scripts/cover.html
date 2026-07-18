@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>OvinFormulation Commercial Vision — Cover</title>
+<style>
+  :root {
+    --c-bg: #f6f6f5;
+    --c-accent: #047857;
+    --c-accent-soft: #065f46;
+    --c-text: #1c1b19;
+    --c-muted: #8b8981;
+    --c-mid: #524a31;
+    --c-surface: #e9e8e3;
+  }
+  @page { size: 210mm 297mm; margin: 0; }
+  html, body { margin: 0; padding: 0; background: var(--c-bg); }
+  .cover {
+    position: relative;
+    width: 210mm;
+    height: 297mm;
+    background: var(--c-bg);
+    font-family: "Georgia", "Noto Serif SC", serif;
+    color: var(--c-text);
+    overflow: hidden;
+  }
+  /* Layer 1: background grid (mm units) */
+  .layer-bg {
+    position: absolute; inset: 0; z-index: 1; overflow: hidden;
+    background-image:
+      linear-gradient(to right, rgba(4, 120, 87, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(4, 120, 87, 0.04) 1px, transparent 1px);
+    background-size: 13mm 13mm;
+  }
+  /* Layer 2: thick vertical anchor line */
+  .layer-structure { position: absolute; inset: 0; z-index: 2; }
+  .vline {
+    position: absolute;
+    left: 25mm;          /* 0.12 * 210mm ≈ 25mm */
+    top: 30mm;           /* 0.10 * 297mm */
+    bottom: 30mm;        /* 0.90 * 297mm */
+    width: 1.6mm;
+    background: var(--c-accent);
+  }
+  /* Layer 3: content */
+  .layer-content { position: absolute; inset: 0; z-index: 3; }
+  .content-block {
+    position: absolute;
+    left: 44mm;          /* 25 + 19 mm offset from thick line */
+    width: 144mm;
+  }
+  .kicker {
+    top: 44mm;           /* ~0.15 * 297mm */
+    font-size: 12pt;
+    font-weight: 400;
+    letter-spacing: 3pt;
+    color: var(--c-muted);
+    text-transform: uppercase;
+    opacity: 0.85;
+    font-family: "Helvetica Neue", "Noto Sans SC", sans-serif;
+  }
+  .brand {
+    top: 58mm;
+    font-size: 17pt;
+    font-weight: 700;
+    color: var(--c-accent);
+    font-family: "Helvetica Neue", "Noto Sans SC", sans-serif;
+    letter-spacing: 0.5pt;
+  }
+  .brand .v { color: var(--c-accent-soft); }
+  .title {
+    top: 77mm;           /* ~0.26 H */
+    font-size: 42pt;
+    font-weight: 800;
+    line-height: 1.10;
+    color: var(--c-text);
+    font-family: "Georgia", "Noto Serif SC", serif;
+    letter-spacing: -0.5pt;
+    max-width: 154mm;
+  }
+  .subtitle {
+    top: 125mm;
+    font-size: 16pt;
+    font-weight: 400;
+    line-height: 1.40;
+    color: var(--c-mid);
+    font-family: "Helvetica Neue", "Noto Sans SC", sans-serif;
+    max-width: 144mm;
+    font-style: italic;
+  }
+  .summary {
+    top: 156mm;
+    font-size: 11.5pt;
+    font-weight: 400;
+    line-height: 1.65;
+    color: var(--c-text);
+    opacity: 0.88;
+    font-family: "Helvetica Neue", "Noto Sans SC", sans-serif;
+    max-width: 138mm;
+  }
+  .tags {
+    top: 212mm;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-width: 138mm;
+  }
+  .tag {
+    display: inline-block;
+    padding: 5px 12px;
+    border: 1px solid var(--c-accent);
+    border-radius: 14px;
+    font-size: 9pt;
+    font-weight: 500;
+    color: var(--c-accent);
+    font-family: "Helvetica Neue", sans-serif;
+    letter-spacing: 0.5pt;
+    text-transform: uppercase;
+  }
+  .meta {
+    top: 233mm;
+    font-size: 10.5pt;
+    font-weight: 400;
+    color: var(--c-muted);
+    font-family: "Helvetica Neue", "Noto Sans SC", sans-serif;
+    line-height: 1.7;
+  }
+  .meta strong {
+    color: var(--c-text);
+    font-weight: 600;
+  }
+  .footer {
+    position: absolute;
+    bottom: 14mm;
+    left: 44mm;
+    right: 16mm;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    font-size: 9pt;
+    color: var(--c-muted);
+    font-family: "Helvetica Neue", sans-serif;
+    letter-spacing: 1.5pt;
+    text-transform: uppercase;
+    opacity: 0.75;
+  }
+  .bottom-bar {
+    position: absolute;
+    bottom: 29mm;
+    left: 44mm;
+    width: 22mm;
+    height: 0.8mm;
+    background: var(--c-accent);
+  }
+</style>
+</head>
+<body>
+<div class="cover">
+  <div class="layer-bg"></div>
+  <div class="layer-structure">
+    <div class="vline"></div>
+  </div>
+  <div class="layer-content">
+    <div class="content-block kicker">COMMERCIAL VISION &middot; 2026 — 2031</div>
+    <div class="content-block brand">OvinFormulation <span class="v">v1.0</span></div>
+    <div class="content-block title">Monetization &amp; Revenue Strategy</div>
+    <div class="content-block subtitle">A five-year roadmap to build the dominant trilingual sheep&nbsp;nutrition platform across the Maghreb, France, and the Middle East.</div>
+    <div class="content-block summary">
+      This document defines the commercial architecture for OvinFormulation v1.0 across three user tiers — Students, Farmers, and Feed Mills — and details the subscription, marketplace, and partnership revenue streams that will drive the platform from initial launch to €5&nbsp;million in annual recurring revenue by Year&nbsp;5. It covers product strategy, pricing, go-to-market, financial projections, risk management, and the seed funding required to capture the underserved 12-million-farmer sheep industry in target markets.
+    </div>
+    <div class="content-block tags">
+      <span class="tag">FR &middot; EN &middot; AR</span>
+      <span class="tag">22 modules</span>
+      <span class="tag">B2C &middot; B2B &middot; B2G</span>
+      <span class="tag">SaaS &middot; Marketplace</span>
+    </div>
+    <div class="content-block meta">
+      <strong>Prepared by</strong>&nbsp;&nbsp;Abdelkader Atia &mdash; AgriSkills Academy<br>
+      <strong>Document</strong>&nbsp;&nbsp;Commercial Vision v1.0 &middot; Confidential Strategy Brief<br>
+      <strong>Date</strong>&nbsp;&nbsp;July 2026 &middot; 5-Year Horizon
+    </div>
+    <div class="bottom-bar"></div>
+    <div class="footer">
+      <span>AgriSkills Academy &middot; OvinFormulation</span>
+      <span>Strategy Brief</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>
