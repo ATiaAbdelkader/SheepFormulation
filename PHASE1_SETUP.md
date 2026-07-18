@@ -41,13 +41,15 @@ Open http://localhost:3000 — you'll see a "Sign in" button in the header. Clic
 
 ### 1. Database (Supabase / Neon / Railway)
 
-Create a PostgreSQL database and copy the connection string to Vercel env vars:
+You have two options for setting up the database on Supabase:
 
-```
-DATABASE_URL="postgresql://user:pass@host:5432/ovinformulation?schema=public"
-```
+#### Option A — Use Prisma migrations (recommended)
 
-Update `prisma/schema.prisma` `datasource db` provider to `postgresql`:
+1. Create a new Supabase project at https://supabase.com/dashboard
+2. Go to **Project Settings → Database → Connection string → URI**
+3. Copy the connection string (looks like `postgresql://postgres.[ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres`)
+4. Set it as `DATABASE_URL` in Vercel env vars (and `.env` locally)
+5. Update `prisma/schema.prisma` `datasource db` provider to `postgresql`:
 
 ```prisma
 datasource db {
@@ -56,7 +58,31 @@ datasource db {
 }
 ```
 
-Then run `bun run db:push` to create all tables.
+6. Run `bun run db:push` to create all tables
+
+#### Option B — Run the SQL migration directly
+
+If you prefer to manage the schema in Supabase directly:
+
+1. Open the Supabase SQL Editor: https://supabase.com/dashboard/project/_/sql/new
+2. Paste the contents of `scripts/supabase-schema.sql`
+3. Click **Run** — this creates all tables + RLS policies + triggers
+
+Then update `prisma/schema.prisma` to `postgresql` and run `bun run db:push` to sync Prisma client with the existing schema.
+
+#### Supabase client (optional — for realtime + storage)
+
+If you want to use Supabase Auth UI, Realtime subscriptions, or Storage in addition to Prisma, set these env vars:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://YOUR-PROJECT-REF.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_xxx
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIs...    # SERVER ONLY — never expose
+```
+
+Get them from **Supabase Dashboard → Project Settings → API**.
+
+The Supabase browser client is already wired up at `src/lib/supabase.ts` — import `supabaseBrowser` in any client component to use it.
 
 ### 2. NextAuth secret
 
