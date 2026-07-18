@@ -7,6 +7,12 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   reactStrictMode: false,
+  // Allow Z.ai preview domains to access _next/* resources during development
+  allowedDevOrigins: [
+    "*.space-z.ai",
+    "preview-*.space-z.ai",
+    "*.preview-*.space-z.ai",
+  ],
 };
 
 export default nextConfig;
