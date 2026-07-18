@@ -3,6 +3,7 @@ import { Cairo } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { LanguageProvider } from "@/lib/language-context";
+import { AuthSessionProvider } from "@/components/providers/session-provider";
 
 const cairo = Cairo({
   variable: "--font-cairo",
@@ -57,10 +58,12 @@ export default function RootLayout({
         className={`${cairo.variable} font-cairo antialiased bg-background text-foreground`}
         style={{ fontFamily: "var(--font-cairo), system-ui, sans-serif" }}
       >
-        <LanguageProvider>
-          {children}
-          <Toaster />
-        </LanguageProvider>
+        <AuthSessionProvider>
+          <LanguageProvider>
+            {children}
+            <Toaster />
+          </LanguageProvider>
+        </AuthSessionProvider>
         <script
           dangerouslySetInnerHTML={{
             __html: `

@@ -33,6 +33,8 @@ import { AlimPrevision } from "@/components/alim/alim-prevision";
 import { AlimRumenSim } from "@/components/alim/alim-rumen-sim";
 import { AlimClassroom } from "@/components/alim/alim-classroom";
 import { AlimProduction } from "@/components/alim/alim-production";
+import { UserMenu } from "@/components/auth/user-menu";
+import { useSession } from "next-auth/react";
 
 type AlimView =
   | "dashboard" | "animals" | "fourrages" | "concentres" | "cmv"
@@ -43,6 +45,7 @@ type AlimView =
 
 export default function Home() {
   const { lang, setLang, t } = useLanguage();
+  const { data: session, status: sessionStatus } = useSession();
   const [view, setView] = useState<AlimView>("dashboard");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [role, setRole] = useState<UserRole>("farmer");
@@ -75,11 +78,22 @@ export default function Home() {
     { id: "production" as AlimView, label: t("nav_production"), desc: t("nav_production_desc"), icon: <Factory className="h-5 w-5" /> },
   ];
 
-  // Load role from localStorage on mount
+  // Load role from localStorage on mount — but override with auth session tier when signed in
   useEffect(() => {
-    const stored = getStoredRole();
-    Promise.resolve().then(() => setRole(stored));
-  }, []);
+    // Auth session takes priority over localStorage role
+    if (sessionStatus === "authenticated" && session?.user?.tier) {
+      const authTier = String(session.user.tier).toLowerCase() as UserRole;
+      if (authTier === "student" || authTier === "farmer" || authTier === "feedmill") {
+        setRole(authTier);
+        return;
+      }
+    }
+    // Fall back to localStorage if not signed in or tier invalid
+    if (sessionStatus !== "loading") {
+      const stored = getStoredRole();
+      Promise.resolve().then(() => setRole(stored));
+    }
+  }, [sessionStatus, session?.user?.tier]);
 
   const handleRoleChange = (newRole: UserRole) => {
     setRole(newRole);
@@ -159,7 +173,11 @@ export default function Home() {
             )}
           </div>
 
-          {/* Role selector */}
+          {/* Auth user menu (sign-in / upgrade / sign-out) */}
+          <UserMenu />
+
+          {/* Role selector — only shown when not signed in (signed-in users get role from their tier) */}
+          {sessionStatus !== "authenticated" && (
           <div className="relative">
             <button
               onClick={() => setRoleMenuOpen(!roleMenuOpen)}
@@ -211,6 +229,7 @@ export default function Home() {
               </div>
             )}
           </div>
+          )}
         </div>
       </header>
 

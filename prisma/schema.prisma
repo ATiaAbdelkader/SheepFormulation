@@ -6,17 +6,125 @@ generator client {
 }
 
 datasource db {
+  // Dev: sqlite (file:./db/custom.db) — set in .env
+  // Prod (Vercel): postgresql — set DATABASE_URL in Vercel env vars
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
+// ============================================================
+// AUTH.js (NextAuth v5) models — required by @auth/prisma-adapter
+// ============================================================
+
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  name          String?
+  image         String?
+  // OvinFormulation custom fields
+  role          String    @default("STUDENT") // STUDENT | FARMER | FEED_MILL | COOPERATIVE | ADMIN
+  preferredLang String    @default("fr") // fr | en | ar
+  country       String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  subscription  Subscription?
+  // Classroom submissions
+  studentSubmissions Submission[] @relation("UserSubmissions")
 }
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ============================================================
+// SUBSCRIPTION & BILLING (Stripe)
+// ============================================================
+
+model Subscription {
+  id                     String              @id @default(cuid())
+  userId                 String              @unique
+  status                 String              @default("FREE") // FREE | TRIALING | ACTIVE | PAST_DUE | CANCELED | INCOMPLETE
+  tier                   String              @default("STUDENT") // STUDENT | FARMER | FEED_MILL | COOPERATIVE
+  // Stripe customer + subscription IDs
+  stripeCustomerId       String?             @unique
+  stripeSubscriptionId   String?             @unique
+  stripePriceId          String?
+  // Billing period
+  currentPeriodStart     DateTime?
+  currentPeriodEnd       DateTime?
+  cancelAtPeriodEnd      Boolean             @default(false)
+  // Metadata
+  trialEndsAt            DateTime?
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+
+  user                   User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  invoices               Invoice[]
+
+  @@index([stripeCustomerId])
+  @@index([status])
+}
+
+model Invoice {
+  id                  String   @id @default(cuid())
+  subscriptionId      String
+  stripeInvoiceId     String   @unique
+  amountDue           Int      // cents
+  amountPaid          Int      // cents
+  currency            String   @default("eur")
+  status              String   // draft | open | paid | uncollectible | void
+  invoicePdf          String?  // URL
+  hostedInvoiceUrl    String?
+  createdAt           DateTime @default(now())
+
+  subscription        Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@index([subscriptionId])
+  @@index([status])
+}
+
+// ============================================================
+// Legacy models (kept for backward compat with existing code)
+// ============================================================
 
 model Post {
   id        String   @id @default(cuid())
@@ -67,6 +175,8 @@ model Submission {
   assignmentId String
   studentName String
   studentEmail String?
+  // Link to authenticated user (optional — students may submit anonymously)
+  userId      String?
   // Ration data (JSON)
   rationData  String   // JSON string of the ration (feeds, quantities, etc.)
   // Computed metrics
@@ -89,9 +199,11 @@ model Submission {
   submittedAt DateTime @default(now())
 
   assignment  Assignment @relation(fields: [assignmentId], references: [id])
+  user        User?      @relation("UserSubmissions", fields: [userId], references: [id])
 
   @@index([assignmentId])
   @@index([studentName])
+  @@index([userId])
 }
 
 // ---------- Academy LMS Extensions ----------
