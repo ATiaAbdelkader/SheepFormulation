@@ -6,9 +6,16 @@ generator client {
 }
 
 datasource db {
-  // Dev: sqlite (file:./db/custom.db) — set in .env
-  // Prod (Vercel): postgresql — set DATABASE_URL in Vercel env vars
-  provider = "sqlite"
+  // Production: Supabase Postgres
+  //   Set DATABASE_URL in .env to your Supabase connection string:
+  //   postgresql://postgres.[ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres
+  //
+  // Local dev fallback: if you want to use SQLite instead of Supabase:
+  //   1. Change provider to "sqlite"
+  //   2. Set DATABASE_URL="file:./db/custom.db"
+  //   3. Run `bun run db:push`
+  // Note: switching providers requires `bun run db:push` to regenerate the client.
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 

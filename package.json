@@ -11,7 +11,8 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset",
-    "seed": "tsx scripts/seed-demo.ts"
+    "seed": "tsx scripts/seed-demo.ts",
+    "check:env": "bun run scripts/check-env.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",

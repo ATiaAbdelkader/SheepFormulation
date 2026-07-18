@@ -19,80 +19,71 @@ This guide walks through setting up the authentication (NextAuth v5) and billing
 ## Quick start (dev)
 
 ```bash
-# 1. Copy env template
-cp .env.example .env
+# 1. Verify your env setup (tells you exactly what's missing)
+bun run check:env
 
-# 2. Set the minimum required vars for dev (other vars can stay blank)
-# In .env, set:
-#   DATABASE_URL="file:/home/z/my-project/db/custom.db"
-#   NEXTAUTH_URL="http://localhost:3000"
-#   (NEXTAUTH_SECRET will use a dev fallback automatically)
-
-# 3. Push the Prisma schema to your dev DB
+# 2. Once check:env reports all critical vars set, sync Prisma with Supabase
 bun run db:push
 
-# 4. Start the dev server
+# 3. Start the dev server
 bun run dev
 ```
 
 Open http://localhost:3000 — you'll see a "Sign in" button in the header. Click it → sign-in page → enter email → magic link prints to your terminal console (since SMTP isn't configured).
 
+You can also verify the Supabase connection at any time:
+```bash
+curl http://localhost:3000/api/supabase/test
+```
+Returns JSON showing env var status + which tables exist in your Supabase Postgres.
+
 ## Production setup
 
-### 1. Database (Supabase / Neon / Railway)
+### 1. Database — Supabase Postgres (already configured)
 
-You have two options for setting up the database on Supabase:
+The Supabase project is set up at:
+- **Project URL:** `https://ddjozkxjwloyjploacuv.supabase.co`
+- **Project ref:** `ddjozkxjwloyjploacuv`
 
-#### Option A — Use Prisma migrations (recommended)
-
-1. Create a new Supabase project at https://supabase.com/dashboard
-2. Go to **Project Settings → Database → Connection string → URI**
-3. Copy the connection string (looks like `postgresql://postgres.[ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres`)
-4. Set it as `DATABASE_URL` in Vercel env vars (and `.env` locally)
-5. Update `prisma/schema.prisma` `datasource db` provider to `postgresql`:
-
-```prisma
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-```
-
-6. Run `bun run db:push` to create all tables
-
-#### Option B — Run the SQL migration directly
-
-If you prefer to manage the schema in Supabase directly:
-
-1. Open the Supabase SQL Editor: https://supabase.com/dashboard/project/_/sql/new
+**Step 1 — Run the SQL migration** (you've already done this):
+1. Open https://supabase.com/dashboard/project/ddjozkxjwloyjploacuv/sql/new
 2. Paste the contents of `scripts/supabase-schema.sql`
-3. Click **Run** — this creates all tables + RLS policies + triggers
+3. Click **Run** — creates all 6 tables (`User`, `Account`, `Session`, `VerificationToken`, `Subscription`, `Invoice`) + RLS policies + triggers
 
-Then update `prisma/schema.prisma` to `postgresql` and run `bun run db:push` to sync Prisma client with the existing schema.
+**Step 2 — Get your database connection string**:
+1. Go to https://supabase.com/dashboard/project/ddjozkxjwloyjploacuv/settings/database
+2. Under "Connection string" → click "URI"
+3. Copy the connection string (looks like):
+   ```
+   postgresql://postgres.ddjozkxjwloyjploacuv:[YOUR-PASSWORD]@aws-0-eu-central-1.pooler.supabase.com:6543/postgres
+   ```
+4. Replace `[YOUR-PASSWORD]` with your database password (you set this when creating the Supabase project)
+5. Paste the final URL into `.env` as `DATABASE_URL=...`
 
-#### Supabase client (optional — for realtime + storage)
+**Step 3 — Get your service role key** (server-only, for Stripe webhooks):
+1. Go to https://supabase.com/dashboard/project/ddjozkxjwloyjploacuv/settings/api
+2. Under "Project API keys" → find "service_role" → click "Reveal"
+3. Copy the long JWT (starts with `eyJ...`)
+4. Paste into `.env` as `SUPABASE_SERVICE_ROLE_KEY=...`
 
-If you want to use Supabase Auth UI, Realtime subscriptions, or Storage in addition to Prisma, set these env vars:
-
+**Step 4 — Verify your setup**:
+```bash
+bun run check:env
 ```
-NEXT_PUBLIC_SUPABASE_URL=https://YOUR-PROJECT-REF.supabase.co
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_xxx
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIs...    # SERVER ONLY — never expose
+This will tell you which env vars are missing and which features will work.
+
+**Step 5 — Sync Prisma client with Supabase schema**:
+```bash
+bun run db:push
 ```
+This connects to your Supabase Postgres and verifies that all Prisma models match the existing tables. Since you already ran the SQL migration, no schema changes will be made — Prisma just regenerates its client types.
 
-Get them from **Supabase Dashboard → Project Settings → API**.
+### 2. NextAuth (already configured)
 
-The Supabase browser client is already wired up at `src/lib/supabase.ts` — import `supabaseBrowser` in any client component to use it.
-
-### 2. NextAuth secret
-
-Generate a 32-byte random string:
-
+The `NEXTAUTH_SECRET` has been pre-generated in your `.env` file. To rotate it:
 ```bash
 openssl rand -base64 32
 ```
-
-Set as `NEXTAUTH_SECRET` in Vercel. Also set `NEXTAUTH_URL=https://yourdomain.com`.
 
 ### 3. Email provider (Resend / Postmark / SMTP)
 
@@ -104,6 +95,8 @@ EMAIL_FROM=noreply@yourdomain.com
 ```
 
 Recommended: [Resend](https://resend.com) — free 3,000 emails/month, 5-minute setup.
+
+In dev without SMTP configured, magic links print to your terminal console.
 
 ### 4. Google OAuth
 
@@ -146,6 +139,15 @@ vercel
 ```
 
 Or connect your GitHub repo in the Vercel dashboard for auto-deploy on push.
+
+**Required Vercel env vars** (Project Settings → Environment Variables):
+- `DATABASE_URL` — your Supabase Postgres connection string
+- `NEXTAUTH_SECRET` — same value as in your local `.env`
+- `NEXTAUTH_URL` — `https://your-vercel-domain.vercel.app`
+- `NEXT_PUBLIC_SUPABASE_URL` — `https://ddjozkxjwloyjploacuv.supabase.co`
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` — `sb_publishable_vBhCOdpFcSfiT2qJYKzxiA_qQJIBrIw`
+- `SUPABASE_SERVICE_ROLE_KEY` — your service role JWT
+- All Stripe vars (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, and the 6 price IDs)
 
 ## Architecture
 
