@@ -2273,6 +2273,235 @@ export const translations = {
     roi_quality_risk: "خطر الجودة المخفض",
     roi_industry_benchmark: "مرجع القطاع",
   },
+
+  // ============================================================
+  // LANDING PAGE (flat keys, prefix: landing_)
+  // ============================================================
+  landing_hero_kicker: { fr: "Plateforme de nutrition ovine", en: "Sheep nutrition platform", ar: "منصة تغذية الأغنام" },
+  landing_hero_title: {
+    fr: "Formulez des rations ovines équilibrées au moindre coût",
+    en: "Formulate balanced sheep rations at the lowest cost",
+    ar: "ركّب علائق أغنام متوازنة بأقل تكلفة",
+  },
+  landing_hero_subtitle: {
+    fr: "22 modules, 3 langues (FR / EN / AR), IA intégrée, solveur LP, simulateur de rumen. La plateforme complète pour étudiants, éleveurs et fabricants d'aliment.",
+    en: "22 modules, 3 languages (FR / EN / AR), built-in AI, LP solver, rumen simulator. The complete platform for students, farmers, and feed mills.",
+    ar: "22 وحدة، 3 لغات (FR / EN / AR)، ذكاء اصطناعي مدمج، محلل LP، محاكي الكرش. المنصة الكاملة للطلاب والمربين ومصنّعي الأعلاف.",
+  },
+  landing_hero_cta_primary: { fr: "Démarrer gratuitement", en: "Start free", ar: "ابدأ مجاناً" },
+  landing_hero_cta_secondary: { fr: "Voir la démo", en: "Watch demo", ar: "شاهد العرض" },
+  landing_hero_stats_users: { fr: "Utilisateurs actifs", en: "Active users", ar: "مستخدم نشط" },
+  landing_hero_stats_modules: { fr: "Modules", en: "Modules", ar: "وحدة" },
+  landing_hero_stats_languages: { fr: "Langues", en: "Languages", ar: "لغة" },
+  landing_hero_stats_feeds: { fr: "Aliments référencés", en: "Feeds in database", ar: "علف في القاعدة" },
+
+  // Features
+  landing_features_kicker: { fr: "Tout-en-un", en: "All-in-one", ar: "الكل في واحد" },
+  landing_features_title: {
+    fr: "Une plateforme, 22 modules, zéro tableur",
+    en: "One platform, 22 modules, zero spreadsheets",
+    ar: "منصة واحدة، 22 وحدة، بلا جداول إكسل",
+  },
+  landing_features_subtitle: {
+    fr: "Tout ce dont vous avez besoin pour formuler, optimiser, et enseigner la nutrition ovine — dans une interface trilingue.",
+    en: "Everything you need to formulate, optimize, and teach sheep nutrition — in a trilingual interface.",
+    ar: "كل ما تحتاجه لتركيب وتحسين وتعليم تغذية الأغنام — في واجهة ثلاثية اللغات.",
+  },
+  landing_features_1_title: { fr: "Calcul de ration intelligent", en: "Smart ration calculator", ar: "حاسبة علائق ذكية" },
+  landing_features_1_desc: {
+    fr: "Sélectionnez l'animal, les fourrages, les concentrés et le CMV. L'outil calcule UFL, PDI, Pabs, Caabs et le coût en temps réel.",
+    en: "Select the animal, forages, concentrates and mineral mix. The tool computes UFL, PDI, Pabs, Caabs and cost in real time.",
+    ar: "اختر الحيوان، الأعلاف الخشنة، المركزات والمكملات المعدنية. تحسب الأداة UFL، PDI، Pabs، Caabs والتكلفة في الوقت الفعلي.",
+  },
+  landing_features_2_title: { fr: "Optimisation moindre coût", en: "Least-cost optimization", ar: "تحسين أقل تكلفة" },
+  landing_features_2_desc: {
+    fr: "Solveur Simplex deux phases intégré. Trouvez la ration la moins chère qui couvre tous les besoins nutritionnels.",
+    en: "Built-in two-phase Simplex solver. Find the cheapest ration that covers all nutritional requirements.",
+    ar: "محلل Simplex من مرحلتين مدمج. ابحث عن أرخص علائق تغطي جميع الاحتياجات الغذائية.",
+  },
+  landing_features_3_title: { fr: "Assistant IA", en: "AI Assistant", ar: "مساعد الذكاء الاصطناعي" },
+  landing_features_3_desc: {
+    fr: "Décrivez votre situation en langage naturel. L'IA génère 1 à 3 rations équilibrées à partir de votre stock.",
+    en: "Describe your situation in natural language. The AI generates 1–3 balanced rations from your inventory.",
+    ar: "صف وضعك بلغة طبيعية. يولّد الذكاء الاصطناعي 1 إلى 3 علائق متوازنة من مخزونك.",
+  },
+  landing_features_4_title: { fr: "Simulateur de rumen", en: "Rumen simulator", ar: "محاكي الكرش" },
+  landing_features_4_desc: {
+    fr: "Visualisez en temps réel la fermentation ruminale : pH, 6 populations microbiennes, AGV, méthane, ammonia.",
+    en: "Visualize ruminal fermentation in real time: pH, 6 microbial populations, VFA, methane, ammonia.",
+    ar: "تصور تخمر الكرش في الوقت الفعلي: pH، 6 مجاميع ميكروبية، AGV، الميثان، الأمونيا.",
+  },
+  landing_features_5_title: { fr: "Production & traçabilité", en: "Production & traceability", ar: "الإنتاج والتتبع" },
+  landing_features_5_desc: {
+    fr: "Gestion des lots avec snapshot de formule, généalogie ingrédient → lot → client, analyse de rappel instantanée.",
+    en: "Batch management with formula snapshots, ingredient → batch → customer genealogy, instant recall analysis.",
+    ar: "إدارة الدفعات مع لقطات التركيبة، سلسلة المكون → الدفعة → العميل، تحليل استدعاء فوري.",
+  },
+  landing_features_6_title: { fr: "Mode pédagogique LMS", en: "Classroom LMS", ar: "وضع الصف LMS" },
+  landing_features_6_desc: {
+    fr: "Devoirs, modèles, classements, suivi de compétences, certificats. 15+ templates prêts à l'emploi pour les lycées agricoles.",
+    en: "Assignments, templates, leaderboards, skill tracking, certificates. 15+ ready-to-use templates for agricultural schools.",
+    ar: "واجبات، نماذج، ترتيبات، تتبع المهارات، شهادات. أكثر من 15 نموذجاً جاهزاً للمدارس الزراعية.",
+  },
+
+  // Pricing
+  landing_pricing_kicker: { fr: "Tarification", en: "Pricing", ar: "الأسعار" },
+  landing_pricing_title: {
+    fr: "Trois tiers, trois publics, un seul produit",
+    en: "Three tiers, three audiences, one product",
+    ar: "ثلاث فئات، ثلاث جمهور، منتج واحد",
+  },
+  landing_pricing_subtitle: {
+    fr: "Gratuit pour les étudiants. €9.90/mois pour les éleveurs. €49/utilisateur/mois pour les fabricants d'aliment.",
+    en: "Free for students. €9.90/month for farmers. €49/user/month for feed mills.",
+    ar: "مجاني للطلاب. €9.90/شهر للمربين. €49/مستخدم/شهر لمصنّعي الأعلاف.",
+  },
+  landing_pricing_student_name: { fr: "Étudiant", en: "Student", ar: "طالب" },
+  landing_pricing_farmer_name: { fr: "Éleveur", en: "Farmer", ar: "مربي" },
+  landing_pricing_feedmill_name: { fr: "Fabricant", en: "Feed Mill", ar: "مصنّع" },
+  landing_pricing_student_price: { fr: "Gratuit", en: "Free", ar: "مجاني" },
+  landing_pricing_farmer_price: { fr: "€9.90", en: "€9.90", ar: "€9.90" },
+  landing_pricing_feedmill_price: { fr: "€49", en: "€49", ar: "€49" },
+  landing_pricing_per_month: { fr: "/mois", en: "/month", ar: "/شهر" },
+  landing_pricing_student_desc: { fr: "Pour apprendre la nutrition ovine", en: "For learning sheep nutrition", ar: "لتعلم تغذية الأغنام" },
+  landing_pricing_farmer_desc: { fr: "Pour optimiser votre troupeau", en: "For optimizing your flock", ar: "لتحسين قطيعك" },
+  landing_pricing_feedmill_desc: { fr: "Pour formuler commercialement", en: "For commercial formulation", ar: "للتركيب التجاري" },
+  landing_pricing_cta_student: { fr: "Créer un compte", en: "Create account", ar: "أنشئ حساب" },
+  landing_pricing_cta_farmer: { fr: "Essayer 14 jours", en: "Try 14 days", ar: "جرّب 14 يوماً" },
+  landing_pricing_cta_feedmill: { fr: "Contacter", en: "Contact us", ar: "اتصل بنا" },
+  landing_pricing_popular: { fr: "Populaire", en: "Popular", ar: "الأكثر شعبية" },
+  landing_pricing_student_feat_1: { fr: "13 modules essentiels", en: "13 essential modules", ar: "13 وحدة أساسية" },
+  landing_pricing_student_feat_2: { fr: "10 messages IA / jour", en: "10 AI messages / day", ar: "10 رسائل ذكاء اصطناعي / يوم" },
+  landing_pricing_student_feat_3: { fr: "3 rations sauvegardées", en: "3 saved rations", ar: "3 علائق محفوظة" },
+  landing_pricing_farmer_feat_1: { fr: "20 modules premium", en: "20 premium modules", ar: "20 وحدة مميزة" },
+  landing_pricing_farmer_feat_2: { fr: "IA illimitée", en: "Unlimited AI", ar: "ذكاء اصطناعي غير محدود" },
+  landing_pricing_farmer_feat_3: { fr: "Prix marché + météo", en: "Market prices + weather", ar: "أسعار السوق + الطقس" },
+  landing_pricing_farmer_feat_4: { fr: "Rations illimitées", en: "Unlimited rations", ar: "علائق غير محدودة" },
+  landing_pricing_feedmill_feat_1: { fr: "22 modules complets", en: "All 22 modules", ar: "كل الـ 22 وحدة" },
+  landing_pricing_feedmill_feat_2: { fr: "Production + traçabilité", en: "Production + traceability", ar: "الإنتاج + التتبع" },
+  landing_pricing_feedmill_feat_3: { fr: "Multi-utilisateur (25)", en: "Multi-user (25 seats)", ar: "متعدد المستخدمين (25)" },
+  landing_pricing_feedmill_feat_4: { fr: "API + white-label", en: "API + white-label", ar: "API + علامة بيضاء" },
+
+  // Testimonials
+  landing_testimonials_kicker: { fr: "Ils l'utilisent", en: "In use by", ar: "يستخدمونه" },
+  landing_testimonials_title: {
+    fr: "Adopté par les lycées agricoles et les éleveurs",
+    en: "Adopted by agricultural schools and farmers",
+    ar: "متبنى من المدارس الزراعية والمربين",
+  },
+  landing_testimonials_1_quote: {
+    fr: "Mes étudiants formulent des rations en 10 minutes au lieu de 2 heures avec Excel. Le mode LMS est révolutionnaire.",
+    en: "My students formulate rations in 10 minutes instead of 2 hours with Excel. The LMS mode is revolutionary.",
+    ar: "طلابي يركبون العلائق في 10 دقائق بدلاً من ساعتين مع Excel. وضع LMS ثوري.",
+  },
+  landing_testimonials_1_author: { fr: "M. Benali, prof agronomie, Alger", en: "M. Benali, agronomy teacher, Algiers", ar: "M. بن علي، أستاذ زراعة، الجزائر" },
+  landing_testimonials_2_quote: {
+    fr: "L'optimisation moindre coût m'a fait économiser 18% sur ma note d'aliment ce trimestre. Retour sur investissement immédiat.",
+    en: "Least-cost optimization saved me 18% on my feed bill this quarter. Immediate ROI.",
+    ar: "تحسين أقل تكلفة وفّر لي 18% من فاتورة العلف هذا الربع. عائد فوري على الاستثمار.",
+  },
+  landing_testimonials_2_author: { fr: "K. Mercier, éleveur 250 brebis, Aveyron", en: "K. Mercier, 250-ewe farmer, Aveyron", ar: "K. ميرسييه، مربي 250 نعجة، أفيرون" },
+  landing_testimonials_3_quote: {
+    fr: "La traçabilité des lots est devenue obligatoire. OvinFormulation nous a fait économiser 15K€ de développement sur-mesure.",
+    en: "Batch traceability became mandatory. OvinFormulation saved us €15K of custom development.",
+    ar: "تتبع الدفعات أصبح إلزامياً. أوفين فورميولاسيون وفّر لنا 15K€ من التطوير المخصص.",
+  },
+  landing_testimonials_3_author: { fr: "S. Hadj, gérant moulin feed, Oran", en: "S. Hadj, feed mill manager, Oran", ar: "S. حاج، مدير مطحنة علف، وهران" },
+
+  // FAQ
+  landing_faq_kicker: { fr: "FAQ", en: "FAQ", ar: "الأسئلة الشائعة" },
+  landing_faq_title: { fr: "Questions fréquentes", en: "Frequently asked questions", ar: "الأسئلة المتكررة" },
+  landing_faq_1_q: { fr: "L'application est-elle vraiment gratuite pour les étudiants ?", en: "Is the app really free for students?", ar: "هل التطبيق مجاني فعلاً للطلاب؟" },
+  landing_faq_1_a: {
+    fr: "Oui. Le tier Étudiant est gratuit à vie, avec 13 modules et 10 messages IA par jour. Idéal pour les lycées agricoles et la formation initiale.",
+    en: "Yes. The Student tier is free forever, with 13 modules and 10 AI messages per day. Ideal for agricultural schools and initial training.",
+    ar: "نعم. فئة الطالب مجانية مدى الحياة، مع 13 وحدة و 10 رسائل ذكاء اصطناعي يومياً. مثالية للمدارس الزراعية والتكوين الأولي.",
+  },
+  landing_faq_2_q: { fr: "Puis-je utiliser l'app hors ligne ?", en: "Can I use the app offline?", ar: "هل يمكنني استخدام التطبيق دون اتصال؟" },
+  landing_faq_2_a: {
+    fr: "OvinFormulation est une PWA — installable sur mobile et desktop. Le mode hors ligne premium (caching des 5 modules les plus utilisés) arrive en Q2.",
+    en: "OvinFormulation is a PWA — installable on mobile and desktop. Premium offline mode (caching the 5 most-used modules) lands in Q2.",
+    ar: "أوفين فورميولاسيون هو PWA — قابل للتثبيت على الهاتف والحاسوب. وضع عدم الاتصال المميز (تخزين أكثر 5 وحدات استخداماً) سيصل في الربع الثاني.",
+  },
+  landing_faq_3_q: { fr: "Mes données sont-elles en sécurité ?", en: "Is my data safe?", ar: "هل بياناتي آمنة؟" },
+  landing_faq_3_a: {
+    fr: "Vos données sont hébergées sur Supabase Postgres (Francfort, UE) avec RLS activé. Conforme RGPD. Aucune revente de données, jamais.",
+    en: "Your data is hosted on Supabase Postgres (Frankfurt, EU) with RLS enabled. GDPR compliant. No data resale, ever.",
+    ar: "بياناتك مستضافة على Supabase Postgres (فرانكفورت، الاتحاد الأوروبي) مع تفعيل RLS. متوافق مع RGPD. لا إعادة بيع للبيانات أبداً.",
+  },
+  landing_faq_4_q: { fr: "Quels modes de paiement acceptez-vous ?", en: "What payment methods do you accept?", ar: "ما طرق الدفع المقبولة؟" },
+  landing_faq_4_a: {
+    fr: "Carte bancaire via Stripe (Visa, Mastercard, AMEX). Edahabia et BaridiMob pour l'Algérie (Q2 2026). PayPal disponible.",
+    en: "Credit card via Stripe (Visa, Mastercard, AMEX). Edahabia and BaridiMob for Algeria (Q2 2026). PayPal available.",
+    ar: "بطاقة بنكية عبر Stripe (Visa, Mastercard, AMEX). Edahabia و BaridiMob للجزائر (الربع الثاني 2026). PayPal متاح.",
+  },
+  landing_faq_5_q: { fr: "Puis-je changer de tier à tout moment ?", en: "Can I change tiers at any time?", ar: "هل يمكنني تغيير الفئة في أي وقت؟" },
+  landing_faq_5_a: {
+    fr: "Oui. Upgrade instantané depuis le menu utilisateur. Downgrade effectif en fin de période. Aucun engagement, annulation en 1 clic.",
+    en: "Yes. Instant upgrade from the user menu. Downgrade effective at period end. No commitment, cancel in 1 click.",
+    ar: "نعم. ترقية فورية من قائمة المستخدم. التخفيض ساري في نهاية الفترة. بدون التزام، إلغاء بنقرة واحدة.",
+  },
+  landing_faq_6_q: { fr: "Proposez-vous des licences pour coopératives ?", en: "Do you offer cooperative licenses?", ar: "هل تقدمون ترخيصات للتعاونيات؟" },
+  landing_faq_6_a: {
+    fr: "Oui — €999/site/mois pour un SaaS multi-tenant white-label, avec option on-premise et SLA. Contactez-nous.",
+    en: "Yes — €999/site/month for a multi-tenant white-label SaaS, with on-premise option and SLA. Contact us.",
+    ar: "نعم — €999/موقع/شهر لـ SaaS متعدد المستأجرين بعلامة بيضاء، مع خيار محلي و SLA. اتصل بنا.",
+  },
+
+  // Final CTA
+  landing_cta_title: {
+    fr: "Prêt à formuler vos rations différemment ?",
+    en: "Ready to formulate your rations differently?",
+    ar: "هل أنت مستعد لتركيب علائقك بطريقة مختلفة؟",
+  },
+  landing_cta_subtitle: {
+    fr: "Rejoignez les éleveurs, étudiants et fabricants qui digitalisent leur nutrition ovine. Premier mois gratuit, sans carte bancaire.",
+    en: "Join the farmers, students and feed mills digitizing their sheep nutrition. First month free, no credit card required.",
+    ar: "انضم إلى المربين والطلاب ومصنّعي الأعلاف الذين يرقمنون تغذية أغنامهم. الشهر الأول مجاني، بدون بطاقة بنكية.",
+  },
+  landing_cta_button: { fr: "Créer mon compte gratuit", en: "Create my free account", ar: "أنشئ حسابي المجاني" },
+
+  // Auth pages
+  auth_signin_title: { fr: "Connexion à OvinFormulation", en: "Sign in to OvinFormulation", ar: "تسجيل الدخول إلى أوفين فورميولاسيون" },
+  auth_signin_subtitle: {
+    fr: "Accédez à 22 modules de nutrition ovine, formulation de ration, optimisation LP, et plus.",
+    en: "Access 22 sheep nutrition modules, ration formulation, LP optimization, and more.",
+    ar: "احصل على 22 وحدة لتغذية الأغنام، تركيب العلائق، تحسين LP، والمزيد.",
+  },
+  auth_signup_title: { fr: "Créer un compte gratuit", en: "Create a free account", ar: "أنشئ حساباً مجانياً" },
+  auth_signup_subtitle: {
+    fr: "Gratuit pour les étudiants. 14 jours d'essai pour les éleveurs. Sans carte bancaire.",
+    en: "Free for students. 14-day trial for farmers. No credit card required.",
+    ar: "مجاني للطلاب. تجربة 14 يوماً للمربين. بدون بطاقة بنكية.",
+  },
+  auth_email_label: { fr: "Adresse email", en: "Email address", ar: "البريد الإلكتروني" },
+  auth_email_placeholder: { fr: "vous@exemple.com", en: "you@example.com", ar: "you@example.com" },
+  auth_name_label: { fr: "Nom complet", en: "Full name", ar: "الاسم الكامل" },
+  auth_name_placeholder: { fr: "Votre nom", en: "Your name", ar: "اسمك" },
+  auth_send_magic_link: { fr: "Envoyer le lien magique", en: "Send magic link", ar: "أرسل الرابط السحري" },
+  auth_continue_google: { fr: "Continuer avec Google", en: "Continue with Google", ar: "تابع مع Google" },
+  auth_or: { fr: "ou", en: "or", ar: "أو" },
+  auth_check_email: {
+    fr: "Vérifiez votre boîte mail — un lien de connexion a été envoyé.",
+    en: "Check your inbox — a sign-in link has been sent.",
+    ar: "تحقق من بريدك — تم إرسال رابط تسجيل الدخول.",
+  },
+  auth_terms: {
+    fr: "En continuant, vous acceptez les Conditions d'Utilisation et la Politique de Confidentialité.",
+    en: "By continuing, you agree to the Terms of Service and Privacy Policy.",
+    ar: "بالمتابعة، توافق على شروط الخدمة وسياسة الخصوصية.",
+  },
+  auth_switch_to_signup: { fr: "Pas encore de compte ? S'inscrire", en: "No account yet? Sign up", ar: "ليس لديك حساب؟ سجل" },
+  auth_switch_to_signin: { fr: "Déjà un compte ? Se connecter", en: "Already have an account? Sign in", ar: "لديك حساب؟ سجل الدخول" },
+  auth_back_home: { fr: "Retour à l'accueil", en: "Back to home", ar: "العودة للرئيسية" },
+
+  // Landing nav
+  landing_nav_features: { fr: "Fonctionnalités", en: "Features", ar: "الميزات" },
+  landing_nav_pricing: { fr: "Tarifs", en: "Pricing", ar: "الأسعار" },
+  landing_nav_faq: { fr: "FAQ", en: "FAQ", ar: "الأسئلة" },
+  landing_nav_signin: { fr: "Connexion", en: "Sign in", ar: "دخول" },
+  landing_nav_get_started: { fr: "Commencer", en: "Get started", ar: "ابدأ الآن" },
+  landing_nav_open_app: { fr: "Ouvrir l'app", en: "Open app", ar: "افتح التطبيق" },
 } as const;
 
 export const LANGUAGES: Array<{ id: Language; label: string; flag: string; dir: "ltr" | "rtl" }> = [

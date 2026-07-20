@@ -35,6 +35,7 @@ import { AlimClassroom } from "@/components/alim/alim-classroom";
 import { AlimProduction } from "@/components/alim/alim-production";
 import { UserMenu } from "@/components/auth/user-menu";
 import { useSession } from "next-auth/react";
+import { LandingPage } from "@/components/landing/landing-page";
 
 type AlimView =
   | "dashboard" | "animals" | "fourrages" | "concentres" | "cmv"
@@ -51,6 +52,10 @@ export default function Home() {
   const [role, setRole] = useState<UserRole>("farmer");
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
+  // Controls whether to show the landing page or the app.
+  // - Default: show landing
+  // - Show app when: user is signed in OR has clicked "Open app" / "Start free"
+  const [showApp, setShowApp] = useState(false);
   const [upgradeModal, setUpgradeModal] = useState<{ moduleId: string; moduleLabel: string; requiredRole: UserRole } | null>(null);
 
   // Build nav items with translations
@@ -94,6 +99,21 @@ export default function Home() {
       Promise.resolve().then(() => setRole(stored));
     }
   }, [sessionStatus, session?.user?.tier]);
+
+  // Auto-open the app when user becomes authenticated
+  useEffect(() => {
+    if (sessionStatus === "authenticated") {
+      setShowApp(true);
+    } else if (sessionStatus === "unauthenticated" && !session) {
+      // User signed out — return to landing
+      setShowApp(false);
+    }
+  }, [sessionStatus, session]);
+
+  // Show landing page when not signed in and not explicitly opening the app
+  if (!showApp && sessionStatus !== "authenticated") {
+    return <LandingPage onOpenApp={() => setShowApp(true)} />;
+  }
 
   const handleRoleChange = (newRole: UserRole) => {
     setRole(newRole);
