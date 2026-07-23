@@ -14,7 +14,14 @@ type LanguageContextType = {
 const LanguageContext = createContext<LanguageContextType>({
   lang: "fr",
   setLang: () => {},
-  t: (key) => translations.fr[key] || String(key),
+  t: (key) => {
+    const topLevelKey = (translations as Record<string, unknown>)[key as string];
+    if (topLevelKey && typeof topLevelKey === "object" && topLevelKey !== null) {
+      const frValue = (topLevelKey as Record<string, string>)["fr"];
+      if (frValue) return frValue;
+    }
+    return (translations.fr as Record<string, string>)[key as string] || String(key);
+  },
   dir: "ltr",
   isRTL: false,
 });
@@ -46,7 +53,19 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   }, [lang]);
 
   const t = (key: TranslationKey): string => {
-    return translations[lang][key] || translations.fr[key] || String(key);
+    // Check if this is a top-level key with { fr, en, ar } structure
+    // (landing_* and auth_* keys are stored at the top level, not inside fr/en/ar)
+    const topLevelKey = (translations as Record<string, unknown>)[key as string];
+    if (topLevelKey && typeof topLevelKey === "object" && topLevelKey !== null) {
+      const langValue = (topLevelKey as Record<string, string>)[lang];
+      if (langValue) return langValue;
+      const frValue = (topLevelKey as Record<string, string>)["fr"];
+      if (frValue) return frValue;
+    }
+    // Standard flat key lookup inside translations[lang]
+    return (translations[lang] as Record<string, string>)[key as string]
+      || (translations.fr as Record<string, string>)[key as string]
+      || String(key);
   };
 
   const dir = getDir(lang);
